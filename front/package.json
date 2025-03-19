@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "install": "ng build",
+    "start": "static-web-server -p 8080 --root dist/front/browser/ --page-fallback dist/front/browser/index.html"
   },
   "private": true,
   "dependencies": {

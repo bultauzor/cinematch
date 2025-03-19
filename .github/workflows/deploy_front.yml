@@ -1,0 +1,17 @@
+name: Deploy front pipeline
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - front/**
+  workflow_dispatch:
+
+jobs:
+  deploy_front:
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+      CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+      CLEVER_APP_ID: ${{ secrets.FRONT_APP_ID }}

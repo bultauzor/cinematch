@@ -1,0 +1,17 @@
+name: Deploy API pipeline
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - api/**
+  workflow_dispatch:
+
+jobs:
+  deploy_api:
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+      CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+      CLEVER_APP_ID: ${{ secrets.API_APP_ID }}
