@@ -1,3 +1,6 @@
+pub mod auth;
+pub mod errors;
+
 use axum::Router;
 use axum::body::Body;
 use axum::extract::Request;
@@ -38,10 +41,11 @@ impl DerefMut for ApiHandlerState {
     }
 }
 
-pub fn app(_api_handler: ApiHandlerState) -> Router<()> {
+pub fn app(_api_handler: ApiHandlerState, auth_api_url: String) -> Router<()> {
     Router::new()
         .route("/ping", get(ping))
         .route("/teapot", get(teapot))
+        .merge(self::auth::auth_router(auth_api_url))
         .layer(axum::middleware::from_fn(log_middleware))
 }
 

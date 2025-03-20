@@ -51,6 +51,12 @@ async fn main() {
     let address = env_get_or("ADDRESS", "0.0.0.0".to_string());
     let port: u16 = env_get_num_or("PORT", 8080);
     let postgresql_uri = env_get("POSTGRESQL_ADDON_URI");
+    let mut auth_api_url = env_get("AUTH_API_URL");
+
+    // ops friendlyness
+    if auth_api_url.ends_with("/") {
+        auth_api_url.pop();
+    }
 
     init_logger();
 
@@ -66,7 +72,7 @@ async fn main() {
         }
     };
 
-    let app = api::app(ApiHandlerState::new(ApiHandler { db }));
+    let app = api::app(ApiHandlerState::new(ApiHandler { db }), auth_api_url);
 
     let listener = tokio::net::TcpListener::bind(format!("{address}:{port}"))
         .await
