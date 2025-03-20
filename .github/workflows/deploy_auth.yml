@@ -3,7 +3,7 @@ name: Deploy auth pipeline
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - auth/**
   workflow_dispatch:
