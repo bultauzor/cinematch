@@ -1,0 +1,17 @@
+name: Deploy auth pipeline
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - auth/**
+  workflow_dispatch:
+
+jobs:
+  deploy_auth:
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+      CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+      CLEVER_APP_ID: ${{ secrets.AUTH_APP_ID }}
