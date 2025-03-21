@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
 import {HomeFooterComponent} from '../../components/molecules/home-footer/home-footer.component';
 import {HomeHeaderComponent} from '../../components/molecules/home-header/home-header.component';
-import {HomeContentComponent} from '../../components/molecules/home-content/home-content.component';
+import {FormAuthComponent} from '../../components/molecules/form-auth/form-auth.component';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-signin',
   imports: [
     HomeFooterComponent,
     HomeHeaderComponent,
-    HomeContentComponent
+    FormAuthComponent
   ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  templateUrl: './signin.component.html',
+  styleUrl: './signin.component.css'
 })
-export class HomeComponent {
+export class SigninComponent {
 
 }

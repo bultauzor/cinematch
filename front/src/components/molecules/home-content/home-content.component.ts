@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {ButtonComponent} from '../atoms/button/button.component';
+import {ButtonComponent} from '../../atoms/button/button.component';
 
 @Component({
   selector: 'app-home-content',

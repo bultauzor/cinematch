@@ -46,4 +46,16 @@
   .signup:hover {
     background-color: rgba(169, 40, 49, 0.87);
   }
+
+  .text {
+    font-family: "Montserrat", serif;
+    margin: 1em;
+
+    a {
+      color: white;
+      text-decoration: underline;
+      text-decoration-color: red;
+      margin: 0.5em;
+    }
+  }
 }

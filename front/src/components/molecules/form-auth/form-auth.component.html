@@ -1,0 +1,36 @@
+<div class="form">
+  <h1 class="title">{{ name }}</h1>
+
+  <div class="input">
+    <app-input-form
+      title="Username"
+      placeholder="my_username"
+      (valueChange)="username = $event">
+    </app-input-form>
+    <span class="error" *ngIf="usernameError">{{ usernameError }}</span>
+  </div>
+
+
+  <div class="input">
+    <app-input-form
+      title="Password"
+      placeholder="********"
+      [secret]="true"
+      (valueChange)="password = $event">
+    </app-input-form>
+    <span class="error" *ngIf="passwordError">{{ passwordError }}</span>
+  </div>
+
+  <div class="input" *ngIf="name=='SIGN UP'">
+    <app-input-form
+      title="Confirm password"
+      placeholder="********"
+      [secret]="true"
+      (valueChange)="confirmPassword = $event">
+    </app-input-form>
+    <span class="error" *ngIf="confirmPasswordError">{{ confirmPasswordError }}</span>
+  </div>
+
+  <app-button type="red" text="Continue" (click)="onSubmit()"></app-button>
+</div>
+
