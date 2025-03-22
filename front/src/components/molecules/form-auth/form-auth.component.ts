@@ -51,10 +51,10 @@ export class FormAuthComponent {
       isValid = false;
     }
 
-    if (!this.confirmPassword.trim()) {
+    if (this.name == 'SIGN UP' && !this.confirmPassword.trim()) {
       this.confirmPasswordError = 'Confirm password is required';
       isValid = false;
-    } else if (this.password != this.confirmPassword) {
+    } else if ( this.name == 'SIGN UP' && this.password != this.confirmPassword) {
       this.confirmPasswordError = 'Confirm password must be identical as the password';
       isValid = false;
     }
@@ -64,16 +64,32 @@ export class FormAuthComponent {
     if (this.name === 'SIGN UP') {
       this.signUp();
     } else {
-      this.signin();
+      this.signIn();
     }
   }
 
-  signUp() {
+  async signUp() {
     console.log('Signup:', this.username, this.password);
+    const response = await fetch(import.meta.env.API_URL+"/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({username: this.username, password: this.password}),
+    })
+    console.log(response);
   }
 
-  signin() {
+  async signIn() {
     console.log('Signin:', this.username, this.password);
+    const response = await fetch("https://app-72ae2df0-328b-458c-84a3-63a7863826e2.cleverapps.io/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({username: this.username, password: this.password}),
+    })
+    console.log(response);
   }
 
   resetErrors() {
