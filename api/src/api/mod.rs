@@ -70,13 +70,15 @@ pub async fn cors_middleware(request: Request, next: Next) -> Response<Body> {
         );
         response.headers_mut().insert(
             header::ACCESS_CONTROL_ALLOW_HEADERS,
-            HeaderValue::from_static("origin,x-requested-with,content-type,accept,authorization"),
+            HeaderValue::from_static("*"),
         );
         response.headers_mut().insert(
             header::ACCESS_CONTROL_MAX_AGE,
             // 24h in seconds
             HeaderValue::from_static("86400"),
         );
+
+        *response.status_mut() = axum::http::StatusCode::OK
     }
 
     response.headers_mut().insert(
