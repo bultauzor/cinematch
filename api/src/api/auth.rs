@@ -26,6 +26,30 @@ pub async fn register(
     auth_api_url: State<String>,
     Json(input): Json<UserInput>,
 ) -> Result<Json<Token>, ApiError> {
+    if input.username.len() < 2 {
+        return Err(ApiError::precondition_failed(
+            "username is too short".to_string(),
+        ));
+    }
+
+    if input.username.len() > 32 {
+        return Err(ApiError::precondition_failed(
+            "username is too long".to_string(),
+        ));
+    }
+
+    if input.password.len() < 4 {
+        return Err(ApiError::precondition_failed(
+            "password is too short".to_string(),
+        ));
+    }
+
+    if input.password.len() > 128 {
+        return Err(ApiError::precondition_failed(
+            "password is too long".to_string(),
+        ));
+    }
+
     let response = reqwest::Client::new()
         .post(format!("{}/register", auth_api_url.deref()))
         .json(&input)

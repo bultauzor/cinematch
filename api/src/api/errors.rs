@@ -8,6 +8,7 @@ pub enum ErrorCode {
     INTERNAL_SERVER_ERROR,
     UNAUTHORIZED,
     BAD_REQUEST,
+    PRECONDITION_FAILED,
 }
 
 impl From<ErrorCode> for StatusCode {
@@ -16,6 +17,7 @@ impl From<ErrorCode> for StatusCode {
             ErrorCode::INTERNAL_SERVER_ERROR => StatusCode::INTERNAL_SERVER_ERROR,
             ErrorCode::UNAUTHORIZED => StatusCode::UNAUTHORIZED,
             ErrorCode::BAD_REQUEST => StatusCode::BAD_REQUEST,
+            ErrorCode::PRECONDITION_FAILED => StatusCode::PRECONDITION_FAILED,
         }
     }
 }
@@ -60,6 +62,13 @@ impl ApiError {
         ApiError {
             error,
             error_code: ErrorCode::BAD_REQUEST,
+        }
+    }
+
+    pub fn precondition_failed(error: String) -> Self {
+        ApiError {
+            error,
+            error_code: ErrorCode::PRECONDITION_FAILED,
         }
     }
 }
