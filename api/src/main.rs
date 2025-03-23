@@ -1,12 +1,14 @@
 pub mod api;
 pub mod db;
+pub mod model;
+pub mod provider;
 
 use crate::api::ApiHandler;
 use crate::api::ApiHandlerState;
 use crate::db::DbHandler;
 
+use crate::provider::tmdb::TmdbProvider;
 use std::str::FromStr;
-
 use tracing::{error, info};
 
 /// Get env var as string or panic
@@ -52,6 +54,7 @@ async fn main() {
     let port: u16 = env_get_num_or("PORT", 8080);
     let postgresql_uri = env_get("POSTGRESQL_ADDON_URI");
     let mut auth_api_url = env_get("AUTH_API_URL");
+    let tmdb_token = env_get("TMDB_TOKEN");
 
     // ops friendlyness
     if auth_api_url.ends_with("/") {
@@ -72,7 +75,21 @@ async fn main() {
         }
     };
 
-    let app = api::app(ApiHandlerState::new(ApiHandler { db }), auth_api_url);
+    let tmdb_provider = match TmdbProvider::new(&tmdb_token) {
+        Some(tmdb_provider) => tmdb_provider,
+        None => {
+            error!("Failed to initialize tmdb provider");
+            std::process::exit(1);
+        }
+    };
+
+    let app = api::app(
+        ApiHandlerState::new(ApiHandler {
+            db,
+            provider: tmdb_provider,
+        }),
+        auth_api_url,
+    );
 
     let listener = tokio::net::TcpListener::bind(format!("{address}:{port}"))
         .await

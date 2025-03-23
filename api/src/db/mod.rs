@@ -1,3 +1,5 @@
+pub mod content;
+
 use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
 
@@ -12,10 +14,6 @@ impl DbHandler {
     }
 
     pub async fn connect(uri: &str) -> Option<Self> {
-        PgPoolOptions::new()
-            .connect(uri)
-            .await
-            .map(|p| Self::new(p))
-            .ok()
+        PgPoolOptions::new().connect(uri).await.map(Self::new).ok()
     }
 }

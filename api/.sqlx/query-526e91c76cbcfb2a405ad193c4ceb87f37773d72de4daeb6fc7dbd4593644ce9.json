@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into contents_genres (content_id, genre) values ($1, $2)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "526e91c76cbcfb2a405ad193c4ceb87f37773d72de4daeb6fc7dbd4593644ce9"
+}

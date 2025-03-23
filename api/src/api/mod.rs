@@ -1,5 +1,6 @@
 pub mod auth;
 pub mod errors;
+pub mod search;
 
 use axum::Router;
 use axum::body::Body;
@@ -9,26 +10,27 @@ use axum::middleware::Next;
 use axum::routing::get;
 use std::ops::{Deref, DerefMut};
 use std::sync::Arc;
-use tokio::sync::Mutex;
 use tracing::info;
 
 use crate::db::DbHandler;
+use crate::provider::tmdb::TmdbProvider;
 
 pub struct ApiHandler {
     pub db: DbHandler,
+    pub provider: TmdbProvider,
 }
 
 #[derive(Clone)]
-pub struct ApiHandlerState(Arc<Mutex<ApiHandler>>);
+pub struct ApiHandlerState(Arc<ApiHandler>);
 
 impl ApiHandlerState {
     pub fn new(handler: ApiHandler) -> Self {
-        Self(Arc::new(Mutex::new(handler)))
+        Self(Arc::new(handler))
     }
 }
 
 impl Deref for ApiHandlerState {
-    type Target = Arc<Mutex<ApiHandler>>;
+    type Target = Arc<ApiHandler>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -41,11 +43,12 @@ impl DerefMut for ApiHandlerState {
     }
 }
 
-pub fn app(_api_handler: ApiHandlerState, auth_api_url: String) -> Router<()> {
+pub fn app(api_handler: ApiHandlerState, auth_api_url: String) -> Router<()> {
     Router::new()
         .route("/ping", get(ping))
         .route("/teapot", get(teapot))
         .merge(self::auth::auth_router(auth_api_url))
+        .merge(search::search_router(api_handler))
         .layer(axum::middleware::from_fn(log_middleware))
         .layer(axum::middleware::from_fn(cors_middleware))
 }
