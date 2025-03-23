@@ -1,0 +1,5 @@
+.angular
+.idea
+dist
+node_modules
+Dockerfile
