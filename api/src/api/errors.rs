@@ -71,3 +71,21 @@ impl IntoResponse for ApiError {
         (status, Json(body)).into_response()
     }
 }
+
+impl From<sqlx::Error> for ApiError {
+    fn from(value: sqlx::Error) -> Self {
+        Self::internal(&value.to_string())
+    }
+}
+
+impl From<reqwest::Error> for ApiError {
+    fn from(value: reqwest::Error) -> Self {
+        Self::internal(&value.to_string())
+    }
+}
+
+impl From<Box<dyn std::error::Error>> for ApiError {
+    fn from(value: Box<dyn std::error::Error>) -> Self {
+        Self::internal(&value.to_string())
+    }
+}

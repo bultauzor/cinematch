@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select genre from contents_genres where content_id = $1;",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "genre",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "424eddd17a7004f2a21ca3f57e7128b2ca2783d269badf23bb9e16c648df7553"
+}

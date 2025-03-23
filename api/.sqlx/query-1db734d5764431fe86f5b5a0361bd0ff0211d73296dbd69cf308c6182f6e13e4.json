@@ -1,0 +1,44 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            update contents\n            set updated_at   = $1,\n                content_type = $2,\n                title        = $3,\n                overview     = $4,\n                poster       = $5,\n                release_date = $6\n            where provider_id = $7\n            returning content_id, updated_at",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "content_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Timestamp",
+        {
+          "Custom": {
+            "name": "content_type",
+            "kind": {
+              "Enum": [
+                "movie",
+                "show"
+              ]
+            }
+          }
+        },
+        "Text",
+        "Text",
+        "Text",
+        "Date",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "1db734d5764431fe86f5b5a0361bd0ff0211d73296dbd69cf308c6182f6e13e4"
+}
