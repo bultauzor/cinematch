@@ -1,0 +1,140 @@
+name: cinematch
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cinematch
+    networks:
+      - backbone
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d cinematch -U user" ]
+      interval: 5s
+      timeout: 60s
+      retries: 10
+      start_period: 10s
+
+  bootstrap_db:
+    build:
+      context: api
+      dockerfile: bootstrap-database.Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRESQL_ADDON_DB: cinematch
+      POSTGRESQL_ADDON_HOST: db
+      POSTGRESQL_ADDON_PASSWORD: password
+      POSTGRESQL_ADDON_PORT: 5432
+      POSTGRESQL_ADDON_USER: user
+    networks:
+      - backbone
+    develop:
+      watch:
+        - action: sync+restart
+          path: api/migrations
+          target: /app/migrations
+        - action: rebuild
+          path: api/bootstrap-database.Dockerfile
+
+  auth:
+    build:
+      context: auth
+      dockerfile: Dockerfile
+    depends_on:
+      bootstrap_db:
+        condition: service_completed_successfully
+        required: true
+    env_file:
+      - docker.env
+    environment:
+      POSTGRESQL_ADDON_DB: cinematch
+      POSTGRESQL_ADDON_HOST: db
+      POSTGRESQL_ADDON_PASSWORD: password
+      POSTGRESQL_ADDON_PORT: 5432
+      POSTGRESQL_ADDON_USER: user
+      PORT: 8080
+    networks:
+      - backbone
+    healthcheck:
+      test: [ "CMD-SHELL", "curl http://localhost:8080/ping" ]
+      interval: 5s
+      timeout: 60s
+      retries: 10
+      start_period: 10s
+    restart: on-failure
+    develop:
+      watch:
+        - action: sync+restart
+          path: auth
+          target: /app
+          ignore:
+            - Dockerfile
+            - requirements.txt
+        - action: rebuild
+          path: auth/requirements.txt
+        - action: rebuild
+          path: auth/Dockerfile
+
+  api:
+    build:
+      context: api
+      dockerfile: Dockerfile
+    depends_on:
+      auth:
+        condition: service_healthy
+        required: true
+    env_file:
+      - docker.env
+    environment:
+      POSTGRESQL_ADDON_DB: cinematch
+      POSTGRESQL_ADDON_HOST: db
+      POSTGRESQL_ADDON_PASSWORD: password
+      POSTGRESQL_ADDON_PORT: 5432
+      POSTGRESQL_ADDON_USER: user
+      POSTGRESQL_ADDON_URI: postgresql://user:password@db:5432/cinematch
+      AUTH_API_URL: http://auth:8080/
+    ports:
+      - "8080:8080"
+    networks:
+      - backbone
+    healthcheck:
+      test: [ "CMD-SHELL", "curl http://localhost:8080/ping" ]
+      interval: 5s
+      timeout: 60s
+      retries: 10
+      start_period: 10s
+    restart: on-failure
+    develop:
+      watch:
+        - action: sync+restart
+          path: api
+          target: /app
+          ignore:
+            - Dockerfile
+            - bootstrap-database.Dockerfile
+        - action: rebuild
+          path: app/Dockerfile
+
+  front:
+    build:
+      context: front
+      dockerfile: Dockerfile
+    depends_on:
+      api:
+        condition: service_healthy
+        required: true
+    ports:
+      - "8000:8000"
+    restart: on-failure
+    develop:
+      watch:
+        - action: rebuild
+          path: front
+          target: /app
+
+networks:
+  backbone:
+    driver: bridge
