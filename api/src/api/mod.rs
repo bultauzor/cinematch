@@ -2,15 +2,18 @@ pub mod auth;
 pub mod errors;
 pub mod search;
 
-use axum::Router;
 use axum::body::Body;
 use axum::extract::Request;
 use axum::http::{HeaderValue, Method, Response, header};
 use axum::middleware::Next;
+use axum::response::IntoResponse;
 use axum::routing::get;
+use axum::{Extension, Router};
+use biscuit_auth::{Authorizer, Biscuit, PublicKey};
 use std::ops::{Deref, DerefMut};
 use std::sync::Arc;
-use tracing::info;
+use tracing::{debug, info};
+use uuid::Uuid;
 
 use crate::db::DbHandler;
 use crate::provider::tmdb::TmdbProvider;
@@ -43,14 +46,33 @@ impl DerefMut for ApiHandlerState {
     }
 }
 
-pub fn app(api_handler: ApiHandlerState, auth_api_url: String) -> Router<()> {
+#[derive(Clone, Debug)]
+pub struct AuthContext {
+    pub user: Uuid,
+    pub username: String,
+}
+
+pub fn app(
+    api_handler: ApiHandlerState,
+    auth_api_url: String,
+    public_key: PublicKey,
+) -> Router<()> {
     Router::new()
         .route("/ping", get(ping))
         .route("/teapot", get(teapot))
         .merge(self::auth::auth_router(auth_api_url))
-        .merge(search::search_router(api_handler))
+        .merge(api(api_handler, public_key))
         .layer(axum::middleware::from_fn(log_middleware))
         .layer(axum::middleware::from_fn(cors_middleware))
+}
+
+pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
+    Router::new()
+        .route("/auth_ping", get(auth_ping))
+        .merge(search::search_router(api_handler))
+        .layer(axum::middleware::from_fn(move |req, next| {
+            auth_middleware(req, next, public_key)
+        }))
 }
 
 pub async fn log_middleware(request: Request, next: Next) -> Response<Body> {
@@ -92,7 +114,62 @@ pub async fn cors_middleware(request: Request, next: Next) -> Response<Body> {
     response
 }
 
+pub async fn auth_middleware(
+    mut request: Request,
+    next: Next,
+    public_key: PublicKey,
+) -> Response<Body> {
+    let token = match request
+        .headers()
+        .get("Authorization")
+        .and_then(|e| e.to_str().ok())
+        .and_then(|authorization| {
+            authorization
+                .to_string()
+                .strip_prefix("Bearer ")
+                .map(ToString::to_string)
+        }) {
+        None => return self::errors::ApiError::unauthorized().into_response(),
+        Some(bearer) => bearer,
+    };
+
+    let biscuit = match Biscuit::from_base64(token, public_key) {
+        Ok(token) => token,
+        Err(_) => return self::errors::ApiError::unauthorized().into_response(),
+    };
+
+    let mut authorizer = Authorizer::new();
+    match authorizer
+        .add_code(r#"allow if user($u);"#)
+        .and_then(|_| authorizer.add_token(&biscuit))
+        .and_then(|_| authorizer.authorize())
+    {
+        Ok(a) => a,
+        Err(_) => return self::errors::ApiError::unauthorized().into_response(),
+    };
+
+    let (user, username) = authorizer
+        .query::<&str, (String, String), _>(
+            "data($id, $username) <- user($id), username($username)",
+        )
+        .unwrap()
+        .pop()
+        .unwrap();
+
+    let user = Uuid::parse_str(&user).unwrap();
+
+    let auth_context = AuthContext { user, username };
+    request.extensions_mut().insert(auth_context);
+
+    next.run(request).await
+}
+
 pub async fn ping() -> &'static str {
+    "PONG !"
+}
+
+pub async fn auth_ping(Extension(auth_context): Extension<AuthContext>) -> &'static str {
+    debug!("{auth_context:#?}");
     "PONG !"
 }
 

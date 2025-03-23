@@ -8,6 +8,7 @@ use crate::api::ApiHandlerState;
 use crate::db::DbHandler;
 
 use crate::provider::tmdb::TmdbProvider;
+use biscuit_auth::PublicKey;
 use std::str::FromStr;
 use tracing::{error, info};
 
@@ -55,6 +56,13 @@ async fn main() {
     let postgresql_uri = env_get("POSTGRESQL_ADDON_URI");
     let mut auth_api_url = env_get("AUTH_API_URL");
     let tmdb_token = env_get("TMDB_TOKEN");
+    let biscuit_pubkey = match PublicKey::from_bytes_hex(&env_get("PUBLIC_KEY")) {
+        Ok(key) => key,
+        Err(e) => {
+            error!("can not parse biscuit public key : {e}",);
+            std::process::exit(1);
+        }
+    };
 
     // ops friendlyness
     if auth_api_url.ends_with("/") {
@@ -89,6 +97,7 @@ async fn main() {
             provider: tmdb_provider,
         }),
         auth_api_url,
+        biscuit_pubkey,
     );
 
     let listener = tokio::net::TcpListener::bind(format!("{address}:{port}"))
