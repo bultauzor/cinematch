@@ -33,3 +33,12 @@ create table if not exists contents_genres
     genre      text,
     primary key (content_id, genre)
 );
+
+create table if not exists contents_seen
+(
+    content_id uuid not null references contents,
+    user_id    uuid not null references users,
+    grade      float,
+    primary key (content_id, user_id)
+);
+

@@ -138,4 +138,21 @@ impl DbHandler {
 
         Ok((res.content_id, res.updated_at))
     }
+
+    pub async fn content_exist(&self, content_id: Uuid) -> Result<bool, sqlx::Error> {
+        match sqlx::query!(
+            r#"
+            select content_id
+            from contents
+            where content_id = $1"#,
+            content_id
+        )
+        .fetch_one(&self.pool)
+        .await
+        {
+            Ok(_) => Ok(true),
+            Err(sqlx::Error::RowNotFound) => Ok(false),
+            Err(e) => Err(e),
+        }
+    }
 }

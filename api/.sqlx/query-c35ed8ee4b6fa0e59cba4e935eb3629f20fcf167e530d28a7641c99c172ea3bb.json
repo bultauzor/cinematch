@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            insert into contents_seen (content_id, user_id, grade)\n            values ($1, $2, $3)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Float8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "c35ed8ee4b6fa0e59cba4e935eb3629f20fcf167e530d28a7641c99c172ea3bb"
+}

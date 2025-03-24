@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            delete from contents_seen \n            where content_id = $1  and user_id= $2\n            returning content_id",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "content_id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "2352d13d4c82118afb0d40774ce66f42ddcf24d5d21d84187376363f06698908"
+}
