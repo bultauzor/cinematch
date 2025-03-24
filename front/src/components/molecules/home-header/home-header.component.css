@@ -1,0 +1,68 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  font-family: "BebasNeue", serif;
+  color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  .title {
+    margin: 0.7em;
+  }
+
+  .buttons {
+    margin: 0.5em;
+  }
+
+  .button {
+    padding-block: 0.3em;
+    padding-inline: 0.8em;
+    margin: 0.4em;
+    font-family: "BebasNeue", serif;
+    font-size: 1.5em;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .signin {
+    background-color: transparent;
+    border: solid 1px #A92831;
+  }
+
+  .signup {
+    background-color: #A92831;
+    border: solid 1px #A92831;
+  }
+
+  .signin:hover {
+    background-color: rgba(169, 40, 49, 0.29);
+  }
+
+  .signup:hover {
+    background-color: rgba(169, 40, 49, 0.87);
+  }
+
+  .text {
+    font-family: "Montserrat", serif;
+    margin: 1em;
+
+    a {
+      color: white;
+      text-decoration: underline;
+      text-decoration-color: red;
+      margin: 0.5em;
+    }
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1em;
+  }
+}

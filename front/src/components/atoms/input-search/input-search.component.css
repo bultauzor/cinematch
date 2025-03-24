@@ -1,0 +1,29 @@
+.content {
+  background-color: #1C2A42;
+  padding: 0.4em;
+  display: flex;
+  flex-direction: row;
+  border-radius: 5px;
+  align-items: center;
+
+  input {
+    background-color: transparent;
+    border: none;
+    color: white;
+    margin: 0.2em;
+    font-size: 1.2em;
+    outline: none;
+  }
+
+  i {
+    margin: 0.2em;
+  }
+
+  span {
+    margin: 0.2em;
+    padding-block: 0.2em;
+    padding-inline: 0.5em;
+    border: solid 1px #21375C;
+    border-radius: 5px;
+  }
+}

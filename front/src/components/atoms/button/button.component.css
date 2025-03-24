@@ -1,0 +1,28 @@
+button {
+  padding-block: 0.3em;
+  padding-inline: 0.8em;
+  margin: 0.4em;
+  font-family: "BebasNeue", serif;
+  font-size: 1.5em;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.red {
+  background-color: #A92831;
+  border: solid 1px #A92831;
+}
+
+.red:hover {
+  background-color: rgba(169, 40, 49, 0.87);
+}
+
+.border_red {
+  background-color: transparent;
+  border: solid 1px #A92831;
+}
+
+.border_red:hover {
+  background-color: rgba(169, 40, 49, 0.29);
+}

@@ -1,0 +1,9 @@
+<div class="input_form">
+  <span class="title">{{ title }}</span>
+  <input
+    [type]="secret ? 'password' : 'text'"
+    [placeholder]="placeholder"
+    class="input"
+    (input)="onInput($event)"
+  >
+</div>
