@@ -34,7 +34,7 @@ impl Content {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct ContentView {
     pub content_id: Uuid,
     pub content_type: ContentType,
