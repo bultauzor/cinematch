@@ -1,3 +1,4 @@
+use crate::api::friends::{Friend, FriendInput, FriendRequest};
 use crate::db::DbHandler;
 use crate::model::content::{Content, ContentInput, ContentType};
 use crate::provider::ProviderKey;
@@ -154,5 +155,65 @@ impl DbHandler {
             Err(sqlx::Error::RowNotFound) => Ok(false),
             Err(e) => Err(e),
         }
+    }
+
+    pub async fn friend_request(
+        &self,
+        friend_request: &FriendInput,
+    ) -> Result<FriendRequest, sqlx::Error> {
+        let mut trx = self.pool.begin().await?;
+
+        let user_id = friend_request.user_id;
+
+        let friend_id = sqlx::query!(
+            r#"
+            select user_id from users
+            where username = $2"#
+        )
+        .fetch_one(&self.pool)
+        .await;
+
+        let res = sqlx::query!(
+            r#"
+            insert into friend_requests (user_id, friend_asked_id) values ($1, $2)"#,
+            &user_id.to_string(),
+            &friend_id.to_string()
+        )
+        .fetch_one(&mut *trx)
+        .await;
+
+        trx.commit().await?;
+
+        Ok((res.user_id, res.friend_asked_id))
+    }
+
+    pub async fn friend_accept(
+        &self,
+        friend_request: &FriendInput,
+    ) -> Result<Friend, sqlx::Error> {
+        let mut trx = self.pool.begin().await?;
+
+        let user_id = friend_request.user_id;
+
+        let friend_id = sqlx::query!(
+            r#"
+            select user_id from users
+            where username = $2"#
+        )
+            .fetch_one(&self.pool)
+            .await;
+
+        let res = sqlx::query!(
+            r#"
+            insert into friends (user_id, friend_id) values ($1, $2)"#,
+            &user_id.to_string(),
+            &friend_id.to_string()
+        )
+            .fetch_one(&mut *trx)
+            .await;
+
+        trx.commit().await?;
+
+        Ok((res.user_id, res.friend_asked_id))
     }
 }

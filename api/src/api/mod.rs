@@ -2,6 +2,7 @@ pub mod auth;
 pub mod errors;
 pub mod search;
 pub mod seen;
+pub mod friends;
 
 use axum::body::Body;
 use axum::extract::Request;
