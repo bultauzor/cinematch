@@ -20,5 +20,5 @@ import {OrSeparatorComponent} from '../../atoms/or-separator/or-separator.compon
   styleUrl: './home-header.component.css'
 })
 export class HomeHeaderComponent {
-  @Input() type: 'classic' | 'signin' | 'signup' | 'user_home' = 'classic';
+  @Input() type: 'classic' | 'signin' | 'signup' | 'user_home' | 'user_classic' = 'classic';
 }

@@ -1,0 +1,47 @@
+.absolute {
+  position: absolute;
+  transform: translate(-100%, -50%);
+  transition: transform 0.3s ease-in-out, opacity 0.3s;
+}
+
+.card {
+  background: #ffb9b9;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #0b132b;
+  font-size: medium;
+}
+
+.small {
+  width: 16em;
+  height: 21em;
+}
+
+.big {
+  width: 25em;
+  height: 33em;
+}
+
+.back-card {
+  background-color: white;
+  width: 25em;
+  height: 33em;
+}
+
+.card:nth-child(n+2) {
+  transform: scale(0.95) translateY(5px);
+}
+
+/* Animation de swipe */
+.swipe-left {
+  transform: translateX(-200%) rotate(-15deg);
+  opacity: 0;
+}
+
+.swipe-right {
+  transform: translateX(200%) rotate(15deg);
+  opacity: 0;
+}
