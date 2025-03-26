@@ -82,7 +82,7 @@ export class FormAuthComponent {
 
   async signIn() {
     console.log('Signin:', this.username, this.password);
-    const response = await fetch("https://app-72ae2df0-328b-458c-84a3-63a7863826e2.cleverapps.io/auth", {
+    const response = await fetch(import.meta.env.API_URL+"/auth", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
