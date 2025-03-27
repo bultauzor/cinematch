@@ -1,18 +1,32 @@
-import { Routes } from '@angular/router';
-import {HomeComponent} from '../pages/home/home.component';
-import {SigninComponent} from '../pages/signin/signin.component';
-import {SignupComponent} from '../pages/signup/signup.component';
-import {UserHomeComponent} from '../pages/user-home/user-home.component';
-import {MoviesSwipeStartComponent} from '../pages/movies-swipe-start/movies-swipe-start.component';
-import {MoviesSwipeSessionComponent} from '../pages/movies-swipe-session/movies-swipe-session.component';
-import {MoviesSwipeResultComponent} from '../pages/movies-swipe-result/movies-swipe-result.component';
+import { Routes } from "@angular/router";
+import { HomeComponent } from "../pages/home/home.component";
+import { SigninComponent } from "../pages/signin/signin.component";
+import { SignupComponent } from "../pages/signup/signup.component";
+import { UserHomeComponent } from "../pages/user-home/user-home.component";
+import { MoviesSwipeStartComponent } from "../pages/movies-swipe-start/movies-swipe-start.component";
+import { MoviesSwipeSessionComponent } from "../pages/movies-swipe-session/movies-swipe-session.component";
+import { MoviesSwipeResultComponent } from "../pages/movies-swipe-result/movies-swipe-result.component";
+import { authGuard } from "../guards/auth.guard";
+import { unauthGuard } from "../guards/unauth.guard";
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'signin', component: SigninComponent },
-  { path: 'signup', component: SignupComponent },
-  { path: 'home', component: UserHomeComponent },
-  { path: 'movies-swipe/start', component: MoviesSwipeStartComponent },
-  { path: "movies-swipe/session", component: MoviesSwipeSessionComponent},
-  { path: "movies-swipe/result", component: MoviesSwipeResultComponent}
+  { path: "", component: HomeComponent },
+  { path: "signin", component: SigninComponent , canActivate: [unauthGuard]},
+  { path: "signup", component: SignupComponent , canActivate: [unauthGuard]},
+  { path: "home", component: UserHomeComponent, canActivate: [authGuard] },
+  {
+    path: "movies-swipe/start",
+    component: MoviesSwipeStartComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: "movies-swipe/session",
+    component: MoviesSwipeSessionComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: "movies-swipe/result",
+    component: MoviesSwipeResultComponent,
+    canActivate: [authGuard],
+  },
 ];

@@ -1,8 +1,10 @@
 <div class="header">
-  <h1 class="title">CINEMATCH</h1>
+  <a href="/" class="title-link">
+    <h1 class="title">CINEMATCH</h1>
+  </a>
   <div class="buttons" *ngIf="type == 'classic'">
     <app-button text="SIGN IN" type="border_red" routerLink="/signin" />
-    <app-button text="SIGN UP" type="red" routerLink="/signup"/>
+    <app-button text="SIGN UP" type="red" routerLink="/signup" />
   </div>
   <div *ngIf="type == 'signin'" class="text">
     <span>New member?</span>
