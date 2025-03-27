@@ -14,6 +14,11 @@
     margin: 0.7em;
   }
 
+  .title-link {
+    text-decoration: none;
+    color: white;
+  }
+
   .buttons {
     margin: 0.5em;
   }
