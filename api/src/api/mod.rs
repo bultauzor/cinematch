@@ -1,8 +1,9 @@
 pub mod auth;
 pub mod errors;
+pub mod friends;
+mod invitations;
 pub mod search;
 pub mod seen;
-pub mod friends;
 
 use axum::body::Body;
 use axum::extract::Request;
@@ -72,6 +73,11 @@ pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
     Router::new()
         .route("/auth_ping", get(auth_ping))
         .merge(search::search_router(api_handler.clone()))
+        .nest("/friends", friends::friends_router(api_handler.clone()))
+        .nest(
+            "/invitations",
+            invitations::invitations_router(api_handler.clone()),
+        )
         .nest("/seen", seen::seen_router(api_handler))
         .layer(axum::middleware::from_fn(move |req, next| {
             auth_middleware(req, next, public_key)

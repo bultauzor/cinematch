@@ -42,21 +42,17 @@ create table if not exists contents_seen
     primary key (content_id, user_id)
 );
 
-create table if not exists friends(
-                                      user_id uuid not null,
-                                      friend_id uuid not null,
-                                      primary key (user_id, friend_id)
-    foreign key (user_id), references users(user_id) on delete cascade,
-    foreign key (friend_id), references users(user_id) on delete cascade
+create table if not exists friends
+(
+   user_id uuid references users on delete cascade,
+   friend_id uuid references users on delete cascade,
+   primary key (user_id, friend_id)
     );
 
 create table if not exists friend_requests
 (
-    user_id          uuid not null,
-    friend_asked_id  uuid not null,
+    user_id          uuid references users on delete cascade,
+    friend_asked_id  uuid references users on delete cascade,
     created_at       timestamp default now(),
-    primary key (user_id, friend_asked_id),
-    foreign key (user_id) references users(user_id) on delete cascade,
-    foreign key (friend_asked_id) references users(user_id) on delete cascade
+    primary key (user_id, friend_asked_id)
     );
-

@@ -1,4 +1,6 @@
 pub mod content;
+pub mod friends;
+mod invitations;
 pub mod seen;
 
 use sqlx::PgPool;
