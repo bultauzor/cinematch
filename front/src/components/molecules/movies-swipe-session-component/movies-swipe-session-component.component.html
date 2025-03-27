@@ -1,0 +1,25 @@
+<div class="content">
+  <h1 class="title">Movies swipe</h1>
+  <div class="swipe-zone">
+    <div class="button left" (click)="onSwipe('left', activeIndex)">
+      <span>Mmmh no...</span>
+      <i class="fa-solid fa-chevron-left"></i>
+    </div>
+    <div class="card-place"></div>
+    <app-movie-card
+        *ngFor="let movie of this.movies; let i = index;"
+        (swipe)="onSwipe($event, i)"
+        [swipeState]="activeIndex == i ? swipeState : ''"
+        cardPosition="absolute"
+        size="big"
+        [title]="movies[i].title"
+        [id]="'card-'+i"
+        [style]="'z-index:'+ (movies.length - i) "
+    />
+    <div class="button right" (click)="onSwipe('right', activeIndex)">
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Good ! I'm in !</span>
+    </div>
+  </div>
+  <app-button type="red" text="Stop session" routerLink="/home"></app-button>
+</div>

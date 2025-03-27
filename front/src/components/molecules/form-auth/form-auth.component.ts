@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {ButtonComponent} from '../../atoms/button/button.component';
 import {InputFormComponent} from '../../atoms/input-form/input-form.component';
 import {NgIf} from '@angular/common';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-form-auth',
@@ -70,7 +71,7 @@ export class FormAuthComponent {
 
   async signUp() {
     console.log('Signup:', this.username, this.password);
-    const response = await fetch(import.meta.env.API_URL+"/register", {
+    const response = await fetch(environment.api_url+"/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +83,7 @@ export class FormAuthComponent {
 
   async signIn() {
     console.log('Signin:', this.username, this.password);
-    const response = await fetch("https://app-72ae2df0-328b-458c-84a3-63a7863826e2.cleverapps.io/auth", {
+    const response = await fetch(environment.api_url+"/auth", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

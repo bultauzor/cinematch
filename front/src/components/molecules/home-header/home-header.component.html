@@ -16,10 +16,13 @@
     <div class="row">
       <app-input-search />
       <app-or-separator />
-      <app-button type="red" text="Movies swipe" />
+      <app-button type="red" text="Movies swipe" routerLink="/movies-swipe/start" />
     </div>
   </div>
   <div *ngIf="type == 'user_home'">
+    <app-avatar class="avatar" />
+  </div>
+  <div *ngIf="type == 'user_classic'">
     <app-avatar class="avatar" />
   </div>
 </div>
