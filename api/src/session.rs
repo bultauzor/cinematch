@@ -1,36 +1,44 @@
 use crate::model::session::{
-    MessageApiTask, MessageParticipantTask, MessageTaskParticipant, Session, TypeMessage,
+    MessageApiTask, MessageParticipantTask, MessageTaskParticipant, TypeMessage,
 };
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use tokio::sync::broadcast;
-use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender, unbounded_channel};
+use tokio::sync::mpsc::{UnboundedSender, unbounded_channel, UnboundedReceiver};
 use tokio::task;
 use uuid::Uuid;
 
+pub struct Session {
+    pub id: Uuid,
+    pub participants: Vec<Uuid>,
+    pub filters: Vec<String>,
+    pub rx: broadcast::Receiver<MessageTaskParticipant>,
+    pub tx: UnboundedSender<TypeMessage>,
+}
+
 impl Session {
     pub fn new(participants: Vec<Uuid>, filters: Vec<String>, id: Uuid) -> Arc<Session> {
-        let (_, tx) = unbounded_channel::<TypeMessage>();
-        let (rx, _) = broadcast::channel::<MessageTaskParticipant>(100);
+        let (unbounded_tx, unbounded_rx) = unbounded_channel::<TypeMessage>();
+        let (broadcast_tx, broadcast_rx) = broadcast::channel::<MessageTaskParticipant>(100);
 
         let session = Arc::new(Self {
             id,
             participants,
             filters,
-            tx,
-            rx,
+            rx : broadcast_rx,
+            tx : unbounded_tx,
         });
 
         let session_clone = session.clone();
 
         task::spawn(async move {
-            session_clone.worker().await;
+            session_clone.worker(broadcast_tx,unbounded_rx).await;
         });
 
         session
     }
 
-    pub async fn worker(self: &Arc<Self>) {
+    pub async fn worker(self: &Arc<Self>, broadcast_tx: broadcast::Sender<MessageTaskParticipant>, mut unbounded_rx: UnboundedReceiver<TypeMessage>) {
         // Recommendations
         let mut movies: VecDeque<Uuid> = VecDeque::new();
 
@@ -51,7 +59,7 @@ impl Session {
 
         let mut nb_restart_demand = 0;
 
-        while let Ok(message) = self.tx.recv().await {
+        while let Some(message) = unbounded_rx.recv().await {
             // If some participant are not yet connected
             if users_connection_state.len() != self.participants.len() {
                 match message {
@@ -61,12 +69,12 @@ impl Session {
                         users_connection_state.insert(user_id, true);
 
                         // Informs all connected participants that a new participant has connected
-                        _ = self.rx.send(MessageTaskParticipant::UserJoined(user_id));
+                        _ = broadcast_tx.send(MessageTaskParticipant::UserJoined(user_id));
 
                         // If all participants are connected
                         if users_connection_state.len() == self.participants.len() {
-                            self.add_movie(&movies, &votes, 2);
-                            _ = self.rx.send(MessageTaskParticipant::Content(vec![
+                            Session::add_movie(&mut movies, &mut votes, 2);
+                            _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
                                 *movies.get(0).unwrap(),
                                 *movies.get(1).unwrap(),
                             ]));
@@ -76,8 +84,13 @@ impl Session {
                     // If a participant leaves the session
                     TypeMessage::Api(MessageApiTask::Leave(user_id)) => {
                         users_senders.remove(&user_id);
-                        users_connection_state.remove(&user_id);
-                        _ = self.rx.send(MessageTaskParticipant::UserLeaved(user_id));
+                        users_connection_state.insert(user_id, false);
+                        _ = broadcast_tx.send(MessageTaskParticipant::UserLeaved(user_id));
+
+                        // If all participants are leaved
+                        if users_connection_state.values().all(|&v| !v) {
+                            return;
+                        }
                     }
                     _ => {}
                 }
@@ -101,7 +114,7 @@ impl Session {
                                                 if map.values().all(|&value| value) {
                                                     match movies.get(*position - global_position) {
                                                         Some(movie) => {
-                                                            _ = self.rx.send(
+                                                            _ = broadcast_tx.send(
                                                                 MessageTaskParticipant::Result(
                                                                     *movie,
                                                                 ),
@@ -122,7 +135,7 @@ impl Session {
                                                 if (movies.len() - 1)
                                                     == (*position - global_position)
                                                 {
-                                                    self.add_movie(&movies, &votes, 1);
+                                                    Session::add_movie(&mut movies, &mut votes, 1);
                                                 }
 
                                                 // Send new content
@@ -143,13 +156,13 @@ impl Session {
                             MessageParticipantTask::Restart => {
                                 nb_restart_demand += 1;
                                 if nb_restart_demand > (self.participants.len() / 2) {
-                                    _ = self.rx.send(MessageTaskParticipant::Restarted);
+                                    _ = broadcast_tx.send(MessageTaskParticipant::Restarted);
                                     movies.clear();
                                     global_position = 0;
                                     users_positions =
                                         users_positions.into_iter().map(|(k, _)| (k, 0)).collect();
-                                    self.add_movie(&movies, &votes, 2);
-                                    _ = self.rx.send(MessageTaskParticipant::Content(vec![
+                                    Session::add_movie(&mut movies, &mut votes, 2);
+                                    _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
                                         *movies.get(0).unwrap(),
                                         *movies.get(1).unwrap(),
                                     ]));
@@ -163,11 +176,11 @@ impl Session {
                                 users_connection_state.insert(user_id, true);
 
                                 // Informs all connected participants that a new participant has connected
-                                _ = self.rx.send(MessageTaskParticipant::UserJoined(user_id));
+                                _ = broadcast_tx.send(MessageTaskParticipant::UserJoined(user_id));
 
                                 match users_positions.get_mut(&user_id) {
                                     Some(position) => {
-                                        _ = users_senders.get(&user_id).unwrap().send(
+                                        _ = tx.send(
                                             MessageTaskParticipant::Content(vec![
                                                 *movies.get(*position - global_position).unwrap(),
                                             ]),
@@ -180,23 +193,21 @@ impl Session {
                                 users_connection_state.insert(user_id, false);
 
                                 // Informs all connected participants that a participant has disconnected
-                                _ = self.rx.send(MessageTaskParticipant::UserLeaved(user_id));
-                            }
-                            _ => {}
+                                _ = broadcast_tx.send(MessageTaskParticipant::UserLeaved(user_id));
+                            },
                         }
                     }
-                    _ => {}
                 }
             }
         }
     }
 
     pub fn add_movie(
-        mut movies: VecDeque<Uuid>,
-        mut votes: VecDeque<HashMap<Uuid, bool>>,
+        movies: &mut VecDeque<Uuid>,
+        votes: &mut VecDeque<HashMap<Uuid, bool>>,
         nb: usize,
     ) {
-        for i in 0..nb {
+        for _ in 0..nb {
             movies.push_back(Uuid::new_v4());
             votes.push_back(HashMap::new());
         }

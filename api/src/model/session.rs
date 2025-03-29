@@ -1,5 +1,5 @@
-use tokio::sync::broadcast;
-use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
+use serde::{Deserialize, Serialize};
+use tokio::sync::mpsc::{UnboundedSender};
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -24,26 +24,18 @@ pub enum MessageApiTask {
     Leave(Uuid),
 }
 
-#[derive(Clone)]
+#[derive(Clone,Deserialize)]
 pub enum MessageParticipantTask {
     /// Parameters : vote(bool)
     Vote(bool),
     Restart,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub enum MessageTaskParticipant {
     Result(Uuid),
     UserJoined(Uuid),
     UserLeaved(Uuid),
     Restarted,
     Content(Vec<Uuid>),
-}
-
-pub struct Session {
-    pub id: Uuid,
-    pub participants: Vec<Uuid>,
-    pub filters: Vec<String>,
-    pub tx: UnboundedReceiver<TypeMessage>,
-    pub rx: broadcast::Sender<MessageTaskParticipant>,
 }
