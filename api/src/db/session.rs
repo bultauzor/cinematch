@@ -3,11 +3,11 @@ impl DbHandler {
         let session_requests = sqlx::query_as!(
             SessionRequest,
             r#"
-            SELECT
+            select
                 sr.owner_id,
                 sr.session_id AS session_id,
-            FROM session_requests sr
-            WHERE sr.user_id = $1
+            from session_requests sr
+            where sr.user_id = $1
             "#,
             &user_id
         )
@@ -22,7 +22,6 @@ impl DbHandler {
         user_username: String,
         session_id: Uuid
     ) -> Result<(), sqlx::Error> {
-        let mut trx = self.pool.begin().await?;
 
         let user_id = sqlx::query!(
             r#"
@@ -35,16 +34,15 @@ impl DbHandler {
 
         let res = sqlx::query!(
             r#"
-                insert into session_requests (user_id, owner_id, session_id) values ($1, $2, $3)
-                returning user_id, session_id"#,
+                insert into session_requests (user_id, owner_id, session_id)
+                values ($1, $2, $3)
+                "#,
             &user_id,
             owner_id,
             session_id
         )
-            .fetch_one(&mut *trx)
+            .execute(&mut *trx)
             .await?;
-
-        trx.commit().await?;
 
         Ok(())
     }
@@ -53,19 +51,16 @@ impl DbHandler {
         user_id: Uuid,
         session_id: Uuid,
     ) -> Result<(), sqlx::Error> {
-        let mut trx = self.pool.begin().await?;
 
         sqlx::query!(
             r#"
-            delete from session_requests where user_id = $1 && session_id = $2
+            delete from session_requests where user_id = $1 and session_id = $2
             "#,
             &user_id,
             session_id
         )
             .execute(&self.pool)
             .await?;
-
-        trx.commit().await?;
 
         Ok(())
     }
@@ -74,19 +69,16 @@ impl DbHandler {
         user_id: Uuid,
         session_id: Uuid,
     ) -> Result<(), sqlx::Error> {
-        let mut trx = self.pool.begin().await?;
 
         sqlx::query!(
             r#"
-            delete from session_requests where user_id = $1 && session_id = $2
+            delete from session_requests where user_id = $1 and session_id = $2
             "#,
             &user_id,
             session_id
         )
-            .fetch_one(&mut *trx)
+            .execute(&mut *trx)
             .await?;
-
-        trx.commit().await?;
 
         Ok(())
     }
