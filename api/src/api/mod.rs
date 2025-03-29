@@ -97,7 +97,7 @@ pub async fn cors_middleware(request: Request, next: Next) -> Response<Body> {
         );
         response.headers_mut().insert(
             header::ACCESS_CONTROL_ALLOW_HEADERS,
-            HeaderValue::from_static("*"),
+            HeaderValue::from_static("*,Authorization"),
         );
         response.headers_mut().insert(
             header::ACCESS_CONTROL_MAX_AGE,
