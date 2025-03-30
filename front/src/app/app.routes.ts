@@ -9,12 +9,14 @@ import { MoviesSwipeResultComponent } from "../pages/movies-swipe-result/movies-
 import { authGuard } from "../guards/auth.guard";
 import { unauthGuard } from "../guards/unauth.guard";
 import {MoviesSwipeLobbyComponent} from '../pages/movies-swipe-lobby/movies-swipe-lobby.component';
+import {MoviePageComponent} from '../pages/movie-page/movie-page.component';
+
 
 export const routes: Routes = [
   { path: "", component: HomeComponent , canActivate: [unauthGuard] },
   { path: "signin", component: SigninComponent , canActivate: [unauthGuard]},
   { path: "signup", component: SignupComponent , canActivate: [unauthGuard]},
-  { path: "home", component: UserHomeComponent, canActivate: [authGuard] },
+  { path: "home", component: UserHomeComponent, canActivate: [authGuard]},
   {
     path: "movies-swipe/start",
     component: MoviesSwipeStartComponent,
@@ -35,4 +37,9 @@ export const routes: Routes = [
     component: MoviesSwipeResultComponent,
     canActivate: [authGuard],
   },
+  {
+    path: "page/:id",
+    component:MoviePageComponent,
+    canActivate: [authGuard]
+  }
 ];
