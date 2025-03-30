@@ -2,7 +2,9 @@ pub mod auth;
 pub mod errors;
 pub mod search;
 pub mod seen;
+mod session;
 
+use std::collections::HashMap;
 use axum::body::Body;
 use axum::extract::Request;
 use axum::http::{HeaderValue, Method, Response, header};
@@ -12,16 +14,19 @@ use axum::routing::get;
 use axum::{Extension, Router};
 use biscuit_auth::{Authorizer, Biscuit, PublicKey};
 use std::ops::{Deref, DerefMut};
-use std::sync::Arc;
+use std::sync::{Arc};
+use tokio::sync::RwLock;
 use tracing::{debug, info};
 use uuid::Uuid;
 
 use crate::db::DbHandler;
 use crate::provider::tmdb::TmdbProvider;
+use crate::session::Session;
 
 pub struct ApiHandler {
     pub db: DbHandler,
     pub provider: TmdbProvider,
+    pub sessions: Arc<RwLock<HashMap<Uuid,Arc<Session>>>>
 }
 
 #[derive(Clone)]
@@ -70,8 +75,7 @@ pub fn app(
 pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
     Router::new()
         .route("/auth_ping", get(auth_ping))
-        .merge(search::search_router(api_handler.clone()))
-        .nest("/seen", seen::seen_router(api_handler))
+        .merge(search::search_router(api_handler))
         .layer(axum::middleware::from_fn(move |req, next| {
             auth_middleware(req, next, public_key)
         }))
@@ -121,18 +125,25 @@ pub async fn auth_middleware(
     next: Next,
     public_key: PublicKey,
 ) -> Response<Body> {
-    let token = match request
-        .headers()
-        .get("Authorization")
-        .and_then(|e| e.to_str().ok())
-        .and_then(|authorization| {
-            authorization
-                .to_string()
-                .strip_prefix("Bearer ")
-                .map(ToString::to_string)
-        }) {
-        None => return self::errors::ApiError::unauthorized().into_response(),
-        Some(bearer) => bearer,
+    fn token_extract(header: &str, request: &mut Request) -> Option<String> {
+        request
+            .headers()
+            .get(header)
+            .and_then(|e| e.to_str().ok())
+            .and_then(|authorization| {
+                authorization
+                    .to_string()
+                    .strip_prefix("Bearer ")
+                    .map(ToString::to_string)
+            })
+    }
+
+    let token = match token_extract("Authorization", &mut request) { 
+        Some(t) => t,
+        None => match token_extract("Sec-WebSocket-Protocol", &mut request) { 
+            Some(t) => t,
+            None => return self::errors::ApiError::unauthorized().into_response()
+        }
     };
 
     let biscuit = match Biscuit::from_base64(token, public_key) {
