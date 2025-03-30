@@ -1,5 +1,6 @@
 pub mod content;
 pub mod seen;
+pub mod session;
 
 use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;

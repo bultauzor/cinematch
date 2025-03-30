@@ -42,3 +42,11 @@ create table if not exists contents_seen
     primary key (content_id, user_id)
 );
 
+create table if not exists session_requests
+(
+    user_id          uuid references users on delete cascade,
+    owner_id         uuid references users on delete cascade not null,
+    session_id  uuid,
+    created_at       timestamp default now() not null,
+    primary key (user_id, session_id)
+);
