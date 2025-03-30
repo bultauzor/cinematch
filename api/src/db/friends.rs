@@ -1,4 +1,4 @@
-use crate::api::friends::{Friend, FriendRequest};
+use crate::api::friends::Friend;
 use crate::db::DbHandler;
 use uuid::Uuid;
 
@@ -18,11 +18,11 @@ impl DbHandler {
     pub async fn create_invitation(
         &self,
         user_id: Uuid,
-        user_username: String,
         username: String,
     ) -> Result<(), sqlx::Error> {
         let mut trx = self.pool.begin().await?;
 
+        // Getting user_id for the person asked to be friend by username
         let friend_id = sqlx::query!(
             r#"
                 select user_id from users
@@ -32,19 +32,54 @@ impl DbHandler {
         .fetch_one(&self.pool)
         .await?;
 
-        // FAIRE UN CAS OU L'INVITATION DE L'AUTRE MEMBRE EST DEJA CREEE ET AJOUTER AUTOMATIQUEMENT LES USERS EN AMIS
-
-        let res = sqlx::query!(
+        // Checking if a friend request has already been made by the person asked to be friend
+        let result = sqlx::query!(
             r#"
-                insert into friend_requests (user_id, friend_asked_id) values ($1, $2)
-                returning user_id, friend_asked_id"#,
+            select user_id, friend_asked_id from friend_requests where (user_id = $2 AND friend_asked_id = $1)
+            "#,
             &user_id,
             friend_id.user_id
-        )
-        .fetch_one(&mut *trx)
-        .await?;
 
-        trx.commit().await?;
+        )
+            .fetch_optional(&self.pool)
+            .await?;
+
+        // If the result is none that means there is no existing request
+        if result.is_none() {
+            // Creating a friend_request
+            sqlx::query!(
+                r#"
+                insert into friend_requests (user_id, friend_asked_id) values ($1, $2)"#,
+                &user_id,
+                friend_id.user_id
+            )
+            .execute(&mut *trx)
+            .await?;
+
+            trx.commit().await?;
+
+        // If the result is not none, that means there is an existing request
+        } else {
+            // Adding the 2 users as friends
+            sqlx::query!(
+                r#"insert into friends (user_id, friend_id) values ($1, $2), ($2, $1)"#,
+                &user_id,
+                friend_id.user_id
+            )
+            .execute(&mut *trx)
+            .await?;
+
+            // Deleting the request that already exists (made by the person asked to be friend)
+            sqlx::query!(
+                r#"
+            delete from friend_requests where friend_asked_id = $1
+            "#,
+                &user_id
+            )
+            .execute(&self.pool)
+            .await?;
+            trx.commit().await?;
+        }
 
         Ok(())
     }

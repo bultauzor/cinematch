@@ -1,4 +1,4 @@
-use crate::api::friends::{Friend, FriendRequest};
+use crate::api::friends::FriendRequest;
 use crate::db::DbHandler;
 use uuid::Uuid;
 
