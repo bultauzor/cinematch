@@ -1,5 +1,5 @@
 use crate::db::DbHandler;
-use crate::model::content::{Content, ContentInput, ContentType};
+use crate::model::content::{Content, ContentInput, ContentType, ContentView};
 use crate::provider::ProviderKey;
 use chrono::{NaiveDateTime, Utc};
 use uuid::Uuid;
@@ -154,5 +154,50 @@ impl DbHandler {
             Err(sqlx::Error::RowNotFound) => Ok(false),
             Err(e) => Err(e),
         }
+    }
+
+
+    pub async fn get_content_by_id(&self, id: &Uuid) -> Result<Option<Content>, sqlx::Error> {
+        let content = sqlx::query!(
+            r#"
+            select content_id,
+                   provider_id,
+                   updated_at,
+                   content_type as "content_type: ContentType",
+                   title,
+                   overview,
+                   poster,
+                   release_date
+            from contents
+            where content_id = $1"#,
+            id
+        )
+            .fetch_one(&self.pool)
+            .await;
+
+        let content = match content {
+            Ok(content) => content,
+            Err(sqlx::Error::RowNotFound) => return Ok(None),
+            e => e?,
+        };
+
+        let genres = sqlx::query!(
+            "select genre from contents_genres where content_id = $1;",
+            content.content_id
+        )
+            .fetch_all(&self.pool)
+            .await?;
+
+        Ok(Some(Content {
+            content_id: content.content_id,
+            provider_id: content.provider_id,
+            updated_at: content.updated_at,
+            content_type: content.content_type,
+            title: content.title,
+            overview: content.overview,
+            poster: content.poster,
+            release_date: content.release_date,
+            genres: genres.into_iter().map(|row| row.genre).collect(),
+        }))
     }
 }

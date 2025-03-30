@@ -22,6 +22,9 @@ pub struct Content {
     pub poster: Option<String>,
     pub release_date: Option<NaiveDate>,
     pub genres: Vec<String>,
+    // pub backdrop: Option<String>,
+    // pub vote_average: f32,
+    // pub vote_count: usize
 }
 
 impl Content {
@@ -43,6 +46,8 @@ pub struct ContentView {
     pub poster: Option<String>,
     pub release_date: Option<NaiveDate>,
     pub genres: Vec<String>,
+    // pub backdrop: Option<String>
+    // pub vote_average: f32,
 }
 
 impl From<Content> for ContentView {

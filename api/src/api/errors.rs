@@ -9,7 +9,7 @@ pub enum ErrorCode {
     UNAUTHORIZED,
     BAD_REQUEST,
     PRECONDITION_FAILED,
-    NOT_FOUND
+    NOT_FOUND,
 }
 
 impl From<ErrorCode> for StatusCode {
@@ -19,7 +19,7 @@ impl From<ErrorCode> for StatusCode {
             ErrorCode::UNAUTHORIZED => StatusCode::UNAUTHORIZED,
             ErrorCode::BAD_REQUEST => StatusCode::BAD_REQUEST,
             ErrorCode::PRECONDITION_FAILED => StatusCode::PRECONDITION_FAILED,
-            ErrorCode::NOT_FOUND => StatusCode::NOT_FOUND
+            ErrorCode::NOT_FOUND => StatusCode::NOT_FOUND,
         }
     }
 }

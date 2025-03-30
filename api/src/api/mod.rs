@@ -4,6 +4,7 @@ pub mod friends;
 mod invitations;
 pub mod search;
 pub mod seen;
+pub mod content;
 mod session;
 
 use axum::body::Body;
@@ -79,7 +80,7 @@ pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
         .route("/auth_ping", get(auth_ping))
         .merge(search::search_router(api_handler.clone()))
         .nest("/seen", seen::seen_router(api_handler.clone()))
-        .nest("/session", session::session_router(api_handler))
+        .nest("/session", session::session_router(api_handler.clone()))
         .nest("/friends", friends::friends_router(api_handler.clone()))
         .nest("/invitations", invitations::invitations_router(api_handler.clone()),
         )
