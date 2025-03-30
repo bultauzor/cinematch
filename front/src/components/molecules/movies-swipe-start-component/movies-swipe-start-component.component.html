@@ -1,0 +1,19 @@
+<div class="content">
+  <h1 class="title">Movies swipe</h1>
+  <div class="config">
+    <app-filter-list title="Filters" subtitle="(optionnal)" [width]="10" [elements]='["Action","Adventure","Animation","Comedy","Crime","Documentary","Drama","Family","Fantastic","War","History"]' (selectedValues)="onFiltersChanged('filters',$event)"/>
+    <app-filter-list title="Friends" [elements]="['alyrow','Skynox','Lemieldesdauphin']" [width]="30" (selectedValues)="onFiltersChanged('friends',$event)"/>
+    <div class="info">
+      <h1 class="info_title">Info</h1>
+      <span>
+        - Select your <b class="red_text">viewing friends</b> <br> <br>
+        - Specify the <b class="red_text">types of movie</b> you are interested in (optional) <br> <br>
+        - <b class="red_text">Start the session</b><br> <br>
+        - Each viewer will receive a <b class="red_text">notification</b> on their home page to <b class="red_text">join the session</b> <br> <br>
+        - Each viewer will <b class="red_text">give their opinion</b> on a selection of films until a film is found that suits everyone.
+      </span>
+    </div>
+  </div>
+  <span class="error-message">You need to select friends</span>
+  <app-button type="red" text="Start session" (click)="startSession()" />
+</div>

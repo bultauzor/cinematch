@@ -1,0 +1,59 @@
+.content {
+  position: fixed;
+  top: 5em;
+  left: 0;
+  bottom: 5em;
+  right: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+
+  .title {
+    font-family: "BebasNeue", serif;
+    font-size: 5em;
+  }
+
+  .swipe-zone {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .button {
+    display: flex;
+    flex-direction: row;
+    font-size: 2em;
+    align-items: center;
+    width: 10em;
+
+    i {
+      font-size: 3em;
+      margin: 0.5em;
+    }
+  }
+
+  .left {
+    justify-content: end;
+    text-align: end;
+  }
+
+  .right {
+    justify-content: start;
+    text-align: start;
+  }
+
+  .card-place {
+    position: relative;
+    width: 25em;
+    height: 33em;
+    margin-bottom: 0.4em;
+    border-radius: 5px;
+  }
+
+  .hidden {
+    visibility: collapse;
+  }
+}

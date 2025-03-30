@@ -1,0 +1,11 @@
+<div [ngClass]="['card',cardPosition,size,swipeState]" (swipe)="onSwipe($event)">
+  <div class="poster">
+    <img [src]="posterUrl" alt="Movie Poster" />
+  </div>
+  <div class="bottom-part">
+    <div class="inner-bottom-part">
+      <p class="title">{{ title }}</p>
+      <p class="rating">{{ rating }} / 10</p>
+    </div>
+  </div>
+</div>

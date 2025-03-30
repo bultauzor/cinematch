@@ -2,6 +2,7 @@ pub mod content;
 pub mod friends;
 mod invitations;
 pub mod seen;
+pub mod session;
 
 use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;

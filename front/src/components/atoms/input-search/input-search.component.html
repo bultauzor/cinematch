@@ -1,5 +1,5 @@
 <div class="content">
   <i class="fas fa-search"></i>
-  <input type="text" placeholder="Search">
+  <input type="text" placeholder="Search" #search [(ngModel)]="query" (keyup.enter)="onEnter()">
   <span>Ctrl K</span>
 </div>

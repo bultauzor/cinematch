@@ -2,14 +2,18 @@ pub mod api;
 pub mod db;
 pub mod model;
 pub mod provider;
+mod session;
 
 use crate::api::ApiHandler;
 use crate::api::ApiHandlerState;
 use crate::db::DbHandler;
+use std::collections::HashMap;
 
 use crate::provider::tmdb::TmdbProvider;
 use biscuit_auth::PublicKey;
 use std::str::FromStr;
+use std::sync::Arc;
+use tokio::sync::RwLock;
 use tracing::{error, info};
 
 /// Get env var as string or panic
@@ -95,6 +99,7 @@ async fn main() {
         ApiHandlerState::new(ApiHandler {
             db,
             provider: tmdb_provider,
+            sessions: Arc::new(RwLock::new(HashMap::new())),
         }),
         auth_api_url,
         biscuit_pubkey,
