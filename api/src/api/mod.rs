@@ -4,7 +4,6 @@ pub mod search;
 pub mod seen;
 mod session;
 
-use std::collections::HashMap;
 use axum::body::Body;
 use axum::extract::Request;
 use axum::http::{HeaderValue, Method, Response, header};
@@ -13,8 +12,9 @@ use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{Extension, Router};
 use biscuit_auth::{Authorizer, Biscuit, PublicKey};
+use std::collections::HashMap;
 use std::ops::{Deref, DerefMut};
-use std::sync::{Arc};
+use std::sync::Arc;
 use tokio::sync::RwLock;
 use tracing::{debug, info};
 use uuid::Uuid;
@@ -26,7 +26,7 @@ use crate::session::Session;
 pub struct ApiHandler {
     pub db: DbHandler,
     pub provider: TmdbProvider,
-    pub sessions: Arc<RwLock<HashMap<Uuid,Arc<Session>>>>
+    pub sessions: Arc<RwLock<HashMap<Uuid, Arc<Session>>>>,
 }
 
 #[derive(Clone)]
@@ -75,7 +75,9 @@ pub fn app(
 pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
     Router::new()
         .route("/auth_ping", get(auth_ping))
-        .merge(search::search_router(api_handler))
+        .merge(search::search_router(api_handler.clone()))
+        .nest("/seen", seen::seen_router(api_handler.clone()))
+        .nest("/session", session::session_router(api_handler))
         .layer(axum::middleware::from_fn(move |req, next| {
             auth_middleware(req, next, public_key)
         }))
@@ -135,15 +137,18 @@ pub async fn auth_middleware(
                     .to_string()
                     .strip_prefix("Bearer ")
                     .map(ToString::to_string)
+                    .or(urlencoding::decode(authorization)
+                        .map(|e| e.to_string())
+                        .ok())
             })
     }
 
-    let token = match token_extract("Authorization", &mut request) { 
+    let token = match token_extract("Authorization", &mut request) {
         Some(t) => t,
-        None => match token_extract("Sec-WebSocket-Protocol", &mut request) { 
+        None => match token_extract("Sec-WebSocket-Protocol", &mut request) {
             Some(t) => t,
-            None => return self::errors::ApiError::unauthorized().into_response()
-        }
+            None => return self::errors::ApiError::unauthorized().into_response(),
+        },
     };
 
     let biscuit = match Biscuit::from_base64(token, public_key) {

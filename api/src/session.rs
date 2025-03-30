@@ -4,8 +4,9 @@ use crate::model::session::{
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use tokio::sync::broadcast;
-use tokio::sync::mpsc::{UnboundedSender, unbounded_channel, UnboundedReceiver};
+use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender, unbounded_channel};
 use tokio::task;
+use tracing::info;
 use uuid::Uuid;
 
 pub struct Session {
@@ -25,20 +26,24 @@ impl Session {
             id,
             participants,
             filters,
-            rx : broadcast_rx,
-            tx : unbounded_tx,
+            rx: broadcast_rx,
+            tx: unbounded_tx,
         });
 
         let session_clone = session.clone();
 
         task::spawn(async move {
-            session_clone.worker(broadcast_tx,unbounded_rx).await;
+            session_clone.worker(broadcast_tx, unbounded_rx).await;
         });
 
         session
     }
 
-    pub async fn worker(self: &Arc<Self>, broadcast_tx: broadcast::Sender<MessageTaskParticipant>, mut unbounded_rx: UnboundedReceiver<TypeMessage>) {
+    pub async fn worker(
+        self: &Arc<Self>,
+        broadcast_tx: broadcast::Sender<MessageTaskParticipant>,
+        mut unbounded_rx: UnboundedReceiver<TypeMessage>,
+    ) {
         // Recommendations
         let mut movies: VecDeque<Uuid> = VecDeque::new();
 
@@ -65,8 +70,10 @@ impl Session {
                 match message {
                     // If a participant joins the session
                     TypeMessage::Api(MessageApiTask::Join { user_id, tx }) => {
+                        info!(?user_id, "Join");
                         users_senders.insert(user_id, tx);
                         users_connection_state.insert(user_id, true);
+                        users_positions.insert(user_id, 0);
 
                         // Informs all connected participants that a new participant has connected
                         _ = broadcast_tx.send(MessageTaskParticipant::UserJoined(user_id));
@@ -83,6 +90,7 @@ impl Session {
 
                     // If a participant leaves the session
                     TypeMessage::Api(MessageApiTask::Leave(user_id)) => {
+                        info!(?user_id, "Leave");
                         users_senders.remove(&user_id);
                         users_connection_state.insert(user_id, false);
                         _ = broadcast_tx.send(MessageTaskParticipant::UserLeaved(user_id));
@@ -100,6 +108,7 @@ impl Session {
                         match message {
                             // User vote
                             MessageParticipantTask::Vote(user_vote) => {
+                                info!(?user_id, "Vote");
                                 match users_positions.get_mut(&user_id) {
                                     Some(position) => {
                                         if let Some(map) = votes.get_mut(*position) {
@@ -131,6 +140,8 @@ impl Session {
                                                 }
                                             }
 
+                                            info!(is_match);
+
                                             if !is_match {
                                                 if (movies.len() - 1)
                                                     == (*position - global_position)
@@ -154,6 +165,7 @@ impl Session {
                             }
                             // User restart demand
                             MessageParticipantTask::Restart => {
+                                info!(?user_id, "Restart");
                                 nb_restart_demand += 1;
                                 if nb_restart_demand > (self.participants.len() / 2) {
                                     _ = broadcast_tx.send(MessageTaskParticipant::Restarted);
@@ -173,6 +185,7 @@ impl Session {
                     TypeMessage::Api(message) => {
                         match message {
                             MessageApiTask::Join { user_id, tx } => {
+                                info!(?user_id, "Join");
                                 users_connection_state.insert(user_id, true);
 
                                 // Informs all connected participants that a new participant has connected
@@ -180,21 +193,20 @@ impl Session {
 
                                 match users_positions.get_mut(&user_id) {
                                     Some(position) => {
-                                        _ = tx.send(
-                                            MessageTaskParticipant::Content(vec![
-                                                *movies.get(*position - global_position).unwrap(),
-                                            ]),
-                                        );
+                                        _ = tx.send(MessageTaskParticipant::Content(vec![
+                                            *movies.get(*position - global_position).unwrap(),
+                                        ]));
                                     }
                                     _ => {}
                                 }
                             }
                             MessageApiTask::Leave(user_id) => {
+                                info!(?user_id, "Leave");
                                 users_connection_state.insert(user_id, false);
 
                                 // Informs all connected participants that a participant has disconnected
                                 _ = broadcast_tx.send(MessageTaskParticipant::UserLeaved(user_id));
-                            },
+                            }
                         }
                     }
                 }

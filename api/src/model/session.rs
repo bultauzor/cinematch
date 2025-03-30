@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use tokio::sync::mpsc::{UnboundedSender};
+use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -24,7 +24,7 @@ pub enum MessageApiTask {
     Leave(Uuid),
 }
 
-#[derive(Clone,Deserialize)]
+#[derive(Clone, Deserialize)]
 pub enum MessageParticipantTask {
     /// Parameters : vote(bool)
     Vote(bool),
