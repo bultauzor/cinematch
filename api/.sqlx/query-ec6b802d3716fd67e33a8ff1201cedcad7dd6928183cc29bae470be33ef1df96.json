@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                insert into session_requests (user_id, owner_id, session_id)\n                values ($1, $2, $3)\n                ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "ec6b802d3716fd67e33a8ff1201cedcad7dd6928183cc29bae470be33ef1df96"
+}

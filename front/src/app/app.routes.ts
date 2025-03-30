@@ -10,14 +10,13 @@ import { authGuard } from "../guards/auth.guard";
 import { unauthGuard } from "../guards/unauth.guard";
 import {MoviePageComponent} from '../pages/movie-page/movie-page.component';
 
-const isAuthenticated = !!localStorage.getItem("token");
+
 
 export const routes: Routes = [
-  // { path: "", component: HomeComponent},
-  { path: "", component: isAuthenticated? UserHomeComponent : HomeComponent},
+  { path: "", component: HomeComponent , canActivate: [unauthGuard] },
   { path: "signin", component: SigninComponent , canActivate: [unauthGuard]},
   { path: "signup", component: SignupComponent , canActivate: [unauthGuard]},
-  { path: "home", component: UserHomeComponent, canActivate: [authGuard]},
+  { path: "home", component: UserHomeComponent, canActivate: [authGuard] },
   {
     path: "movies-swipe/start",
     component: MoviesSwipeStartComponent,

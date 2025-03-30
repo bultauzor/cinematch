@@ -4,15 +4,7 @@ import { ButtonComponent } from "../../atoms/button/button.component";
 import { InputFormComponent } from "../../atoms/input-form/input-form.component";
 import { NgIf } from "@angular/common";
 import { environment } from "../../../environments/environment";
-
-type AuthToken = {
-  token: string;
-};
-
-type ApiError = {
-  error: string;
-  error_code: string;
-};
+import { AuthToken , ApiError } from "../../../models/api"
 
 @Component({
   selector: "app-form-auth",

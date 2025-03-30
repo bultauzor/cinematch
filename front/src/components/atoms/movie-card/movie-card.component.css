@@ -8,8 +8,10 @@
   background: #ffb9b9;
   border-radius: 10px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   color: #0b132b;
   font-size: medium;
@@ -44,4 +46,50 @@
 .swipe-right {
   transform: translateX(200%) rotate(15deg);
   opacity: 0;
+}
+
+.poster {
+  height: 80%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bottom-part {
+  height: 20%;
+  width: 100%;
+  background-color: #1F2937;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.inner-bottom-part {
+  margin: 10px 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  p {
+    margin: 0 3vh;
+  }
+}
+
+.title {
+  height: 60%;
+  font-weight: bold;
+  margin: 0;
+  text-size-adjust: auto;
+}
+
+.rating {
+  height: 40%;
+  margin: 0;
+  text-size-adjust: auto;
+  text-align: right;
 }

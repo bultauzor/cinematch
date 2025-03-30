@@ -17,7 +17,9 @@ import {HAMMER_GESTURE_CONFIG, HammerGestureConfig} from '@angular/platform-brow
   styleUrl: './movie-card.component.css'
 })
 export class MovieCardComponent {
+  @Input() posterUrl: string = "https://www.themoviedb.org/t/p/original/8tDyUTNsV5ZiXtBJYU0bFbSYxEj.jpg";
   @Input() title: string = "";
+  @Input() rating: string = "5";
   @Input() swipeState: string = '';
   @Input() cardPosition: '' | 'absolute' = '';
   @Input() size: 'small' | 'big' = 'small';
