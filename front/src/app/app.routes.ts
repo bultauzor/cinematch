@@ -13,6 +13,9 @@ import {ContactComponent} from '../pages/contact/contact.component';
 import {AboutComponent} from '../pages/about/about.component';
 import {TermsComponent} from '../pages/terms/terms.component';
 import {MoviePageComponent} from '../pages/movie-page/movie-page.component';
+import {MoviePageComponent} from '../pages/movie-page/movie-page.component';
+
+const isAuthenticated = !!localStorage.getItem("token");
 
 export const routes: Routes = [
   { path: "", component: HomeComponent, canActivate: [unauthGuard]},
@@ -47,6 +50,11 @@ export const routes: Routes = [
   {
     path: "terms", component: TermsComponent
   },
+  {
+    path: "page/:id",
+    component:MoviePageComponent,
+    canActivate: [authGuard]
+  }
   {
     path: "page/:id",
     component:MoviePageComponent,
