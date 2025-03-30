@@ -1,0 +1,84 @@
+<div class="movie-card">
+
+  @if (movieData?.title){
+    <h1 class="movie-title">{{movieData?.title}}</h1>
+  } @else {
+    <h1 class="movie-title">Title of the movie</h1>
+  }
+
+  <div class="movie-poster">
+    @if (movieData?.poster){
+      <h2>{{movieData?.poster}}</h2>
+    } @else {
+      <h2>Poster of movie</h2>
+    }
+
+  </div>
+
+  <div class="movie-info">
+
+    @if (movieData?.content_type){
+      <h3>Description - {{movieData?.content_type}}</h3>
+    } @else {
+      <h3>Description - TV SHOW</h3>
+    }
+    <div class="genre-container">
+
+      @if (movieData?.genres){
+        @for (genre of movieData?.genres; track genre){
+          <span class="genre-label">
+                {{ genre }}
+            </span>
+        }
+      } @else {
+        @for (genre of genres; track genre){
+          <span class="genre-label">
+                {{ genre }}
+            </span>
+        }
+      }
+
+
+    </div>
+
+    @if(movieData?.grade){
+      <div class="grade">{{movieData?.grade}}/10</div>
+    } @else {
+      <div class="grade">8.5/10</div>
+    }
+
+
+  </div>
+
+  <div class="movie-description-container">
+
+  @if (movieData?.overview){
+  <div class="movie-description">
+    {{movieData?.overview}}
+  </div>
+  } @else {
+    <div class="movie-description">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu faucibus velit,
+      sit amet pulvinar velit. Etiam velit nibh, feugiat quis, quam a, vulputate tempus nisi.
+      Curabitur consectetur at nibh at aliquet. Suspendisse semper ligula ullamcorper, lacinia
+      orci vitae, vulputate dui. Mauris ullamcorper massa nec nisl bibendum sodales.
+    </div>
+  }
+
+  </div>
+
+  <div class="rating-container">
+    <div class="rating-label">Your grade : {{ userRating }} / 10</div>
+    <input
+      disabled="true"
+      type="range"
+      min="0"
+      max="20"
+      step="1"
+      [(ngModel)]="sliderValue"
+      (input)="updateRating()"
+      class="rating-slider">
+
+    <app-button type="red" text="Submit grade"/>
+  </div>
+</div>
