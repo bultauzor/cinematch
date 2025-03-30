@@ -50,3 +50,17 @@ create table if not exists session_requests
     created_at       timestamp default now() not null,
     primary key (user_id, session_id)
 );
+create table if not exists friends
+(
+   user_id uuid references users on delete cascade,
+   friend_id uuid references users on delete cascade,
+   primary key (user_id, friend_id)
+    );
+
+create table if not exists friend_requests
+(
+    user_id          uuid references users on delete cascade,
+    friend_asked_id  uuid references users on delete cascade,
+    created_at       timestamp default now(),
+    primary key (user_id, friend_asked_id)
+    );
