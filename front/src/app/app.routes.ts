@@ -12,12 +12,13 @@ import {MoviesSwipeLobbyComponent} from '../pages/movies-swipe-lobby/movies-swip
 import {ContactComponent} from '../pages/contact/contact.component';
 import {AboutComponent} from '../pages/about/about.component';
 import {TermsComponent} from '../pages/terms/terms.component';
+import {MoviePageComponent} from '../pages/movie-page/movie-page.component';
 
 export const routes: Routes = [
   { path: "", component: HomeComponent, canActivate: [unauthGuard]},
   { path: "signin", component: SigninComponent , canActivate: [unauthGuard]},
   { path: "signup", component: SignupComponent , canActivate: [unauthGuard]},
-  { path: "home", component: UserHomeComponent, canActivate: [authGuard] },
+  { path: "home", component: UserHomeComponent, canActivate: [authGuard]},
   {
     path: "movies-swipe/start",
     component: MoviesSwipeStartComponent,
@@ -45,5 +46,10 @@ export const routes: Routes = [
   },
   {
     path: "terms", component: TermsComponent
+  },
+  {
+    path: "page/:id",
+    component:MoviePageComponent,
+    canActivate: [authGuard]
   }
 ];
