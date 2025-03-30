@@ -11,17 +11,19 @@ enum ContentType {
 
 export interface SeenContent {
   content: ContentView;
-  grade?: number; // Optionnel, car il peut être null
+  grade?: number;
 }
 
+
+
 export interface ContentView {
-  content_id: string; // UUID sous forme de string
-  content_type: string; // Enum possible si défini côté backend
+  content_id: string;
+  content_type: ContentType;
   title: string;
   overview: string;
-  poster?: string; // Optionnel
-  release_date?: string; // Stocké sous forme de string (ISO 8601) pour éviter les problèmes de Date
-  genres: string[]; // Liste de genres sous forme de tableau de chaînes de caractères
+  poster?: string;
+  release_date?: string;
+  genres: string[];
   grade?: number;
 }
 
@@ -39,17 +41,11 @@ export interface ContentView {
 })
 export class MoviePageComponentComponent implements OnInit {
   movieID: string | undefined;
-  title: string | undefined;
-  contentType: ContentType | undefined;
-  description: string | undefined;
-  poster: string | undefined;
-  release_date: Date | undefined;
-  // genres: string[] | undefined;
+  movieData?: ContentView;
   grade: number | undefined;
   seen: boolean | undefined;
-  userRating: number = 4.0;
-  sliderValue: number = 8; // Valeur initiale (4 * 2 car chaque pas de 0.5 correspond à 1 sur le slider)
-  movieData?: ContentView;
+  userRating: number = 5.0;
+  sliderValue: number = 10;
   genres: string[] = ['Action', 'Adventure', 'Crime', 'Drama', 'Sci-Fi'];
 
 
@@ -59,7 +55,6 @@ export class MoviePageComponentComponent implements OnInit {
     this.route.params.subscribe(async (params) => {
       this.movieID = params['id'];
       console.log('Test ID : ', this.movieID);
-      this.contentType = ContentType.Movie
 
 
       if (this.movieID) {
@@ -113,6 +108,7 @@ export class MoviePageComponentComponent implements OnInit {
 
         } catch (error) {
           console.error("Erreur :", error);
+          alert("OSKOUR MAUVAIS")
           // await this.router.navigate([""]);
         }
       }
