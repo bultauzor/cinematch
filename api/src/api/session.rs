@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use crate::api::errors::ApiError;
 use crate::api::{ApiHandlerState, AuthContext};
 use crate::db::session::SessionRequest;
@@ -26,16 +27,13 @@ pub struct SessionInput {
 pub async fn start(
     Extension(auth_context): Extension<AuthContext>,
     State(state): State<ApiHandlerState>,
-    Json(input): Json<SessionInput>,
+    Json(mut input): Json<SessionInput>,
 ) -> Result<Json<Uuid>, ApiError> {
-    if input.participants.len() < 2 {
+    if input.participants.len() < 1 {
         return Err(ApiError::precondition_failed("not enough users".to_owned()));
     }
-    if !input.participants.contains(&auth_context.user) {
-        return Err(ApiError::precondition_failed(
-            "owner must be among the participants".to_owned(),
-        ));
-    }
+
+    input.participants.push(auth_context.user);
 
     let session_id = Uuid::new_v4();
     let session = Session::new(input.participants.clone(), input.filters, session_id);
@@ -163,10 +161,29 @@ pub async fn get_invitations(
     Ok(Json(session_requests))
 }
 
+pub async fn get_info(
+    State(state): State<ApiHandlerState>,
+    Path(session_id): Path<Uuid>,
+) -> Result<Json<SessionInput>, ApiError> {
+    let sessions_lock = state.sessions.read().await;
+    if let Some(session) = sessions_lock.clone().get(&session_id) {
+        let mut session_data: SessionInput = SessionInput { participants: vec![], filters: vec![] };
+        session_data.participants = session.participants.clone();
+        session_data.filters = session.filters.clone();
+
+        Ok(Json(session_data))
+    } else {
+        Err(ApiError::not_found(
+            "session not found".to_owned(),
+        ))
+    }
+}
+
 pub fn session_router(api_handler: ApiHandlerState) -> Router {
     Router::new()
         .route("/", post(start))
         .route("/{id_session}", get(join))
         .route("/", get(get_invitations))
+        .route("/{id_session}/info", get(get_info))
         .with_state(api_handler)
 }

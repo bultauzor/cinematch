@@ -3,6 +3,7 @@ use crate::model::session::{
 };
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
+use serde::Serialize;
 use tokio::sync::broadcast;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender, unbounded_channel};
 use tokio::task;
@@ -82,8 +83,8 @@ impl Session {
                         if users_connection_state.len() == self.participants.len() {
                             Session::add_movie(&mut movies, &mut votes, 2);
                             _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
-                                *movies.get(0).unwrap(),
-                                *movies.get(1).unwrap(),
+                                movies[0],
+                                movies[1],
                             ]));
                         }
                     }
@@ -170,13 +171,15 @@ impl Session {
                                 if nb_restart_demand > (self.participants.len() / 2) {
                                     _ = broadcast_tx.send(MessageTaskParticipant::Restarted);
                                     movies.clear();
+                                    votes.clear();
                                     global_position = 0;
                                     users_positions =
                                         users_positions.into_iter().map(|(k, _)| (k, 0)).collect();
+                                    nb_restart_demand = 0;
                                     Session::add_movie(&mut movies, &mut votes, 2);
                                     _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
-                                        *movies.get(0).unwrap(),
-                                        *movies.get(1).unwrap(),
+                                        movies[0],
+                                        movies[1]
                                     ]));
                                 }
                             }

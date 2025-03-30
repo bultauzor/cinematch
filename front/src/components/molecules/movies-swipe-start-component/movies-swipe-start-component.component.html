@@ -2,7 +2,7 @@
   <h1 class="title">Movies swipe</h1>
   <div class="config">
     <app-filter-list title="Filters" subtitle="(optionnal)" [width]="10" [elements]='["Action","Adventure","Animation","Comedy","Crime","Documentary","Drama","Family","Fantastic","War","History"]' (selectedValues)="onFiltersChanged('filters',$event)"/>
-    <app-filter-list title="Friends" [elements]="['alyrow','Skynox','Lemieldesdauphin']" [width]="30" (selectedValues)="onFiltersChanged('friends',$event)"/>
+    <app-filter-list title="Friends" [elements]="friends_username" [width]="30" (selectedValues)="onFiltersChanged('friends',$event)"/>
     <div class="info">
       <h1 class="info_title">Info</h1>
       <span>
