@@ -1,13 +1,21 @@
+use uuid::Uuid;
+use crate::db::DbHandler;
+
+pub struct SessionRequest {
+    pub owner_id: Uuid,
+    pub session_id: Uuid
+}
+
 impl DbHandler {
     pub async fn get_invitations(&self, user_id: Uuid) -> Result<Vec<SessionRequest>, sqlx::Error> {
         let session_requests = sqlx::query_as!(
             SessionRequest,
             r#"
             select
-                sr.owner_id,
-                sr.session_id AS session_id,
-            from session_requests sr
-            where sr.user_id = $1
+                owner_id,
+                session_id
+            from session_requests
+            where user_id = $1
             "#,
             &user_id
         )
@@ -19,44 +27,17 @@ impl DbHandler {
     pub async fn create_invitation(
         &self,
         owner_id: Uuid,
-        user_username: String,
-        session_id: Uuid
-    ) -> Result<(), sqlx::Error> {
-
-        let user_id = sqlx::query!(
-            r#"
-                select user_id from users
-                where username = $1"#,
-            &user_username
-        )
-            .fetch_one(&self.pool)
-            .await?;
-
-        let res = sqlx::query!(
-            r#"
-                insert into session_requests (user_id, owner_id, session_id)
-                values ($1, $2, $3)
-                "#,
-            &user_id,
-            owner_id,
-            session_id
-        )
-            .execute(&mut *trx)
-            .await?;
-
-        Ok(())
-    }
-    pub async fn accept_invitation(
-        &self,
         user_id: Uuid,
-        session_id: Uuid,
+        session_id: Uuid
     ) -> Result<(), sqlx::Error> {
 
         sqlx::query!(
             r#"
-            delete from session_requests where user_id = $1 and session_id = $2
-            "#,
-            &user_id,
+                insert into session_requests (user_id, owner_id, session_id)
+                values ($1, $2, $3)
+                "#,
+            user_id,
+            owner_id,
             session_id
         )
             .execute(&self.pool)
@@ -64,20 +45,18 @@ impl DbHandler {
 
         Ok(())
     }
-    pub async fn refuse_invitation(
+    pub async fn delete_session_invitations(
         &self,
-        user_id: Uuid,
         session_id: Uuid,
     ) -> Result<(), sqlx::Error> {
 
         sqlx::query!(
             r#"
-            delete from session_requests where user_id = $1 and session_id = $2
+            delete from session_requests where session_id = $1
             "#,
-            &user_id,
             session_id
         )
-            .execute(&mut *trx)
+            .execute(&self.pool)
             .await?;
 
         Ok(())
