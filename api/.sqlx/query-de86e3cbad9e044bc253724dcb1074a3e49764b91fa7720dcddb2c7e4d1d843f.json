@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            insert into contents (provider_id, updated_at, content_type, title, overview, poster, release_date)\n            values ($1, $2, $3, $4, $5, $6, $7)\n            returning content_id, updated_at",
+  "query": "\n            insert into contents (provider_id, updated_at, content_type, title, overview, poster, release_date, backdrop, vote_average, vote_count)\n            values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)\n            returning content_id, updated_at",
   "describe": {
     "columns": [
       {
@@ -32,7 +32,10 @@
         "Text",
         "Text",
         "Text",
-        "Date"
+        "Date",
+        "Text",
+        "Float8",
+        "Int4"
       ]
     },
     "nullable": [
@@ -40,5 +43,5 @@
       false
     ]
   },
-  "hash": "428fca648548b86ed484b5fcb4f41e17467322a0f66066049f052bbef7f8c39e"
+  "hash": "de86e3cbad9e044bc253724dcb1074a3e49764b91fa7720dcddb2c7e4d1d843f"
 }

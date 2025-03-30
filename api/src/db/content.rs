@@ -1,5 +1,5 @@
 use crate::db::DbHandler;
-use crate::model::content::{Content, ContentInput, ContentType, ContentView};
+use crate::model::content::{Content, ContentInput, ContentType};
 use crate::provider::ProviderKey;
 use chrono::{NaiveDateTime, Utc};
 use uuid::Uuid;
@@ -18,7 +18,10 @@ impl DbHandler {
                    title,
                    overview,
                    poster,
-                   release_date
+                   release_date,
+                   backdrop,
+                   vote_average,
+                   vote_count
             from contents
             where provider_id = $1"#,
             pk.to_string()
@@ -49,6 +52,9 @@ impl DbHandler {
             poster: content.poster,
             release_date: content.release_date,
             genres: genres.into_iter().map(|row| row.genre).collect(),
+            vote_average: content.vote_average,
+            vote_count: content.vote_count,
+            backdrop: content.backdrop,
         }))
     }
 
@@ -60,8 +66,8 @@ impl DbHandler {
 
         let res = sqlx::query!(
             r#"
-            insert into contents (provider_id, updated_at, content_type, title, overview, poster, release_date)
-            values ($1, $2, $3, $4, $5, $6, $7)
+            insert into contents (provider_id, updated_at, content_type, title, overview, poster, release_date, backdrop, vote_average, vote_count)
+            values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
             returning content_id, updated_at"#,
             &content.provider_id.to_string(),
             Utc::now().naive_utc(),
@@ -69,7 +75,10 @@ impl DbHandler {
             &content.title,
             &content.overview,
             content.poster,
-            content.release_date
+            content.release_date,
+            content.backdrop,
+            content.vote_average,
+            content.vote_count
         )
             .fetch_one(&mut *trx)
             .await?;
@@ -167,7 +176,10 @@ impl DbHandler {
                    title,
                    overview,
                    poster,
-                   release_date
+                   release_date,
+                   backdrop,
+                   vote_count,
+                   vote_average
             from contents
             where content_id = $1"#,
             id
@@ -198,6 +210,9 @@ impl DbHandler {
             poster: content.poster,
             release_date: content.release_date,
             genres: genres.into_iter().map(|row| row.genre).collect(),
+            backdrop: content.backdrop,
+            vote_average: content.vote_average,
+            vote_count: content.vote_count,
         }))
     }
 }

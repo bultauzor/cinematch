@@ -1,0 +1,86 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select c.content_id,\n                   c.provider_id,\n                   c.content_type as \"content_type: ContentType\",\n                   c.title,\n                   c.overview,\n                   c.poster,\n                   c.release_date,\n                   c.backdrop,\n                   c.vote_average,\n                   s.grade\n            from contents_seen as s\n            join contents as c on s.content_id=c.content_id\n            where s.user_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "content_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "provider_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "content_type: ContentType",
+        "type_info": {
+          "Custom": {
+            "name": "content_type",
+            "kind": {
+              "Enum": [
+                "movie",
+                "show"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "overview",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "poster",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "release_date",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 7,
+        "name": "backdrop",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "vote_average",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 9,
+        "name": "grade",
+        "type_info": "Float8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "fe72f03cd1c2f8a2544f5975a677f51e157ca2bae7aaec3f76750b0d2b78737e"
+}

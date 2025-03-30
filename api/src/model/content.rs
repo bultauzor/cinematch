@@ -22,9 +22,9 @@ pub struct Content {
     pub poster: Option<String>,
     pub release_date: Option<NaiveDate>,
     pub genres: Vec<String>,
-    // pub backdrop: Option<String>,
-    // pub vote_average: f32,
-    // pub vote_count: usize
+    pub backdrop: Option<String>,
+    pub vote_average: Option<f64>,
+    pub vote_count: Option<i32>
 }
 
 impl Content {
@@ -46,8 +46,8 @@ pub struct ContentView {
     pub poster: Option<String>,
     pub release_date: Option<NaiveDate>,
     pub genres: Vec<String>,
-    // pub backdrop: Option<String>
-    // pub vote_average: f32,
+    pub backdrop: Option<String>,
+    pub vote_average: f64,
 }
 
 impl From<Content> for ContentView {
@@ -60,6 +60,8 @@ impl From<Content> for ContentView {
             poster: value.poster,
             release_date: value.release_date,
             genres: value.genres,
+            backdrop: value.backdrop,
+            vote_average: value.vote_average.unwrap_or_default(),            
         }
     }
 }
@@ -72,6 +74,9 @@ pub struct ContentInput {
     pub poster: Option<String>,
     pub release_date: Option<NaiveDate>,
     pub genres: Vec<String>,
+    pub backdrop: Option<String>,
+    pub vote_average: Option<f64>,
+    pub vote_count: Option<i32>
 }
 
 impl ContentInput {
@@ -86,6 +91,9 @@ impl ContentInput {
             poster: self.poster,
             release_date: self.release_date,
             genres: self.genres,
+            backdrop: self.backdrop,
+            vote_average: self.vote_average,
+            vote_count: self.vote_count
         }
     }
 }
