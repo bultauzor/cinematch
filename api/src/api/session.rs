@@ -173,8 +173,8 @@ pub async fn get_info(
 
         Ok(Json(session_data))
     } else {
-        Err(ApiError::precondition_failed(
-            "bad id".to_owned(),
+        Err(ApiError::not_found(
+            "session not found".to_owned(),
         ))
     }
 }

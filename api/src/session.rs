@@ -83,8 +83,8 @@ impl Session {
                         if users_connection_state.len() == self.participants.len() {
                             Session::add_movie(&mut movies, &mut votes, 2);
                             _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
-                                *movies.get(0).unwrap(),
-                                *movies.get(1).unwrap(),
+                                movies[0],
+                                movies[1],
                             ]));
                         }
                     }
@@ -178,8 +178,8 @@ impl Session {
                                     nb_restart_demand = 0;
                                     Session::add_movie(&mut movies, &mut votes, 2);
                                     _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
-                                        *movies.get(0).unwrap(),
-                                        *movies.get(1).unwrap(),
+                                        movies[0],
+                                        movies[1]
                                     ]));
                                 }
                             }

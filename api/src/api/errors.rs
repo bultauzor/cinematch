@@ -9,6 +9,7 @@ pub enum ErrorCode {
     UNAUTHORIZED,
     BAD_REQUEST,
     PRECONDITION_FAILED,
+    NOT_FOUND
 }
 
 impl From<ErrorCode> for StatusCode {
@@ -18,6 +19,7 @@ impl From<ErrorCode> for StatusCode {
             ErrorCode::UNAUTHORIZED => StatusCode::UNAUTHORIZED,
             ErrorCode::BAD_REQUEST => StatusCode::BAD_REQUEST,
             ErrorCode::PRECONDITION_FAILED => StatusCode::PRECONDITION_FAILED,
+            ErrorCode::NOT_FOUND => StatusCode::NOT_FOUND
         }
     }
 }
@@ -69,6 +71,13 @@ impl ApiError {
         ApiError {
             error,
             error_code: ErrorCode::PRECONDITION_FAILED,
+        }
+    }
+
+    pub fn not_found(error: String) -> Self {
+        ApiError {
+            error,
+            error_code: ErrorCode::NOT_FOUND,
         }
     }
 }

@@ -8,6 +8,7 @@ import { MoviesSwipeSessionComponent } from "../pages/movies-swipe-session/movie
 import { MoviesSwipeResultComponent } from "../pages/movies-swipe-result/movies-swipe-result.component";
 import { authGuard } from "../guards/auth.guard";
 import { unauthGuard } from "../guards/unauth.guard";
+import {MoviesSwipeLobbyComponent} from '../pages/movies-swipe-lobby/movies-swipe-lobby.component';
 
 export const routes: Routes = [
   { path: "", component: HomeComponent , canActivate: [unauthGuard] },
@@ -17,6 +18,11 @@ export const routes: Routes = [
   {
     path: "movies-swipe/start",
     component: MoviesSwipeStartComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: "movies-swipe/lobby",
+    component: MoviesSwipeLobbyComponent,
     canActivate: [authGuard],
   },
   {

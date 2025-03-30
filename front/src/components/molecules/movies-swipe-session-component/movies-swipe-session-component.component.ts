@@ -3,6 +3,7 @@ import {ButtonComponent} from '../../atoms/button/button.component';
 import {MovieCardComponent} from '../../atoms/movie-card/movie-card.component';
 import {NgForOf} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
+import {WebSocketService} from '../../../services/websocket.service';
 
 @Component({
   selector: 'app-movies-swipe-session-component',
@@ -17,33 +18,39 @@ import {Router, RouterLink} from '@angular/router';
 })
 export class MoviesSwipeSessionComponentComponent {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private webSocketService: WebSocketService) { }
 
-  movies = [
-    { title: "Movie 1" },
-    { title: "Movie 2" },
-    { title: "Movie 3" },
-    { title: "Movie 4" },
-    { title: "Movie 5" },
-    { title: "Movie 6" }
-  ];
+  movies = JSON.parse(<string>localStorage.getItem("movies"));
   swipeState: string = '';
   activeIndex: number = 0;
+
+  async ngOnInit(): Promise<void> {
+
+    if (this.webSocketService.ws) {
+      this.webSocketService.ws.onmessage = (event) => {
+
+        const message = JSON.parse(event.data);
+
+        if (Object.keys(message)[0] === 'Content') {
+          this.movies.push(Object.values(message)[0]);
+          this.movies = [...this.movies];
+        } else if(Object.keys(message)[0] === 'Result'){
+          localStorage.setItem("Result", JSON.stringify(Object.values(message)[0]));
+          this.router.navigate(['/movies-swipe/result']);
+        }
+      };
+    }
+  }
 
   onSwipe(direction: string, index: number) {
     if (direction === 'left') {
       this.swipeState = 'swipe-left';
       this.reset(index);
-      console.log('left');
+      this.webSocketService.sendMessage(JSON.stringify({'Vote':false}));
     } else if(direction === 'right') {
       this.swipeState = 'swipe-right';
       this.reset(index)
-      console.log('right')
-    }
-    if(this.movies.length-1 == index){
-      setTimeout(() => {
-        this.router.navigate(['/movies-swipe/result']);
-      }, 300);
+      this.webSocketService.sendMessage(JSON.stringify({'Vote':true}));
     }
   }
 

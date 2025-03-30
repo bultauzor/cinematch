@@ -1,0 +1,29 @@
+.content {
+  position: fixed;
+  top: 5em;
+  left: 0;
+  bottom: 5em;
+  right: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+
+  .title {
+    font-family: "BebasNeue", serif;
+    font-size: 5em;
+  }
+
+  .subtitle {
+    font-family: "Montserrat", serif;
+    font-size: 3em;
+  }
+
+  .text-content {
+    font-family: "Montserrat", serif;
+    font-size: 1.5em;
+    margin: 2em;
+  }
+}
