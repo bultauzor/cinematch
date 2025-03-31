@@ -12,6 +12,8 @@ import {MoviesSwipeLobbyComponent} from '../pages/movies-swipe-lobby/movies-swip
 import {MoviePageComponent} from '../pages/movie-page/movie-page.component';
 
 
+
+
 export const routes: Routes = [
   { path: "", component: HomeComponent , canActivate: [unauthGuard] },
   { path: "signin", component: SigninComponent , canActivate: [unauthGuard]},
