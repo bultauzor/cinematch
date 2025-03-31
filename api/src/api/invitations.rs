@@ -18,6 +18,8 @@ pub async fn get_invitations(
     Ok(Json(res))
 }
 
+
+// Le user_ID est l'ID du gars qui a envoyé la demande, placé en user_id dans la table friend_requests
 pub async fn accept_invitation(
     State(api_handler_state): State<ApiHandlerState>,
     Extension(auth_context): Extension<AuthContext>,

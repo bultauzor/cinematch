@@ -26,6 +26,8 @@ impl DbHandler {
 
         Ok(friend_requests)
     }
+
+    // Le friend_id est l'ID du gars qui a envoyé la demande, placé en user_id dans la table friend_requests
     pub async fn accept_invitation(
         &self,
         user_id: Uuid,
@@ -43,11 +45,12 @@ impl DbHandler {
 
         sqlx::query!(
             r#"
-            delete from friend_requests where friend_asked_id = $1
+            delete from friend_requests where friend_asked_id = $2 and user_id = $1
             "#,
-            &friend_id
+            &friend_id,
+            &user_id
         )
-        .execute(&self.pool)
+        .execute(&mut *trx)
         .await?;
 
         trx.commit().await?;

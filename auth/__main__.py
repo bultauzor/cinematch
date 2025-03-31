@@ -35,7 +35,7 @@ async def db_check(request: Request, call_next):
         with request.app.state.db.cursor() as cur:
             cur.execute("SELECT 1")
     except OperationalError as e:
-        request.app.state.db.reconnect()
+        request.app.state.db.connect()
 
     response = await call_next(request)
     return response
