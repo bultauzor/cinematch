@@ -1,7 +1,8 @@
+pub mod avatar;
 pub mod content;
 pub mod friends;
-mod invitations;
-mod recommender;
+pub mod invitations;
+pub mod recommender;
 pub mod seen;
 pub mod session;
 
