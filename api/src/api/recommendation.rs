@@ -29,7 +29,7 @@ async fn get_recommendations(
         })?;
 
     let mut res = vec![];
-    for _ in 0..500.min(recommender.len().await) {
+    for _ in 0..100.min(recommender.len().await) {
         if let Ok(Some(r)) = recommender.next().await {
             if let Some(content) = api_handler_state
                 .db
