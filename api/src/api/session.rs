@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use crate::api::errors::ApiError;
 use crate::api::{ApiHandlerState, AuthContext};
 use crate::db::session::SessionRequest;
@@ -13,6 +12,7 @@ use axum::routing::{get, post};
 use axum::{Extension, Json, Router};
 use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 use tokio::sync::broadcast;
 use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
 use tracing::warn;
@@ -167,15 +167,16 @@ pub async fn get_info(
 ) -> Result<Json<SessionInput>, ApiError> {
     let sessions_lock = state.sessions.read().await;
     if let Some(session) = sessions_lock.clone().get(&session_id) {
-        let mut session_data: SessionInput = SessionInput { participants: vec![], filters: vec![] };
+        let mut session_data: SessionInput = SessionInput {
+            participants: vec![],
+            filters: vec![],
+        };
         session_data.participants = session.participants.clone();
         session_data.filters = session.filters.clone();
 
         Ok(Json(session_data))
     } else {
-        Err(ApiError::not_found(
-            "session not found".to_owned(),
-        ))
+        Err(ApiError::not_found("session not found".to_owned()))
     }
 }
 

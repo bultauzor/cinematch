@@ -1,9 +1,9 @@
 use crate::model::session::{
     MessageApiTask, MessageParticipantTask, MessageTaskParticipant, TypeMessage,
 };
+use serde::Serialize;
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
-use serde::Serialize;
 use tokio::sync::broadcast;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender, unbounded_channel};
 use tokio::task;
@@ -82,10 +82,8 @@ impl Session {
                         // If all participants are connected
                         if users_connection_state.len() == self.participants.len() {
                             Session::add_movie(&mut movies, &mut votes, 2);
-                            _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
-                                movies[0],
-                                movies[1],
-                            ]));
+                            _ = broadcast_tx
+                                .send(MessageTaskParticipant::Content(vec![movies[0], movies[1]]));
                         }
                     }
 
@@ -178,8 +176,7 @@ impl Session {
                                     nb_restart_demand = 0;
                                     Session::add_movie(&mut movies, &mut votes, 2);
                                     _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
-                                        movies[0],
-                                        movies[1]
+                                        movies[0], movies[1],
                                     ]));
                                 }
                             }

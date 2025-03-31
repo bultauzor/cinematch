@@ -108,5 +108,8 @@ impl PartialEq<Content> for ContentInput {
             && self.poster.eq(&other.poster)
             && self.release_date.eq(&other.release_date)
             && self.genres.eq(&other.genres)
+            && self.backdrop.eq(&other.backdrop)
+            && self.vote_average.eq(&other.vote_average)
+            && self.vote_count.eq(&other.vote_count)
     }
 }
