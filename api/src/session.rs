@@ -1,6 +1,10 @@
+use crate::model::content::ContentType;
+use crate::model::recommendation::RecommendationParametersInput;
 use crate::model::session::{
     MessageApiTask, MessageParticipantTask, MessageTaskParticipant, TypeMessage,
 };
+use crate::recommender::cinematch::CinematchRecommender;
+use crate::recommender::utils::RecommenderDeque;
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use tokio::sync::broadcast;
@@ -15,10 +19,16 @@ pub struct Session {
     pub filters: Vec<String>,
     pub rx: broadcast::Receiver<MessageTaskParticipant>,
     pub tx: UnboundedSender<TypeMessage>,
+    recommender: Arc<CinematchRecommender>,
 }
 
 impl Session {
-    pub fn new(participants: Vec<Uuid>, filters: Vec<String>, id: Uuid) -> Arc<Session> {
+    pub fn new(
+        participants: Vec<Uuid>,
+        filters: Vec<String>,
+        id: Uuid,
+        recommender: Arc<CinematchRecommender>,
+    ) -> Arc<Session> {
         let (unbounded_tx, unbounded_rx) = unbounded_channel::<TypeMessage>();
         let (broadcast_tx, broadcast_rx) = broadcast::channel::<MessageTaskParticipant>(100);
 
@@ -28,6 +38,7 @@ impl Session {
             filters,
             rx: broadcast_rx,
             tx: unbounded_tx,
+            recommender,
         });
 
         let session_clone = session.clone();
@@ -45,7 +56,19 @@ impl Session {
         mut unbounded_rx: UnboundedReceiver<TypeMessage>,
     ) {
         // Recommendations
-        let mut movies: VecDeque<Uuid> = VecDeque::new();
+        let mut movies = RecommenderDeque::new(
+            self.recommender
+                .get_user_recommendation(RecommendationParametersInput {
+                    users_input: self.participants.clone(),
+                    not_seen_by: self.participants.clone(),
+                    disable_content_type_filter: true,
+                    content_type: ContentType::Movie, // Do nothing
+                    disable_genre_filter: true,
+                    genres: self.filters.clone(),
+                })
+                .await
+                .unwrap(),
+        );
 
         // Votes : VecDeque<HashMap<user(Uuid),user_vote(bool)>>
         let mut votes: VecDeque<HashMap<Uuid, bool>> = VecDeque::new();
@@ -80,9 +103,11 @@ impl Session {
 
                         // If all participants are connected
                         if users_connection_state.len() == self.participants.len() {
-                            Session::add_movie(&mut movies, &mut votes, 2);
-                            _ = broadcast_tx
-                                .send(MessageTaskParticipant::Content(vec![movies[0], movies[1]]));
+                            Session::add_movie(&mut movies, &mut votes, 2).await;
+                            _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
+                                movies[0].content_id,
+                                movies[1].content_id,
+                            ]));
                         }
                     }
 
@@ -123,7 +148,7 @@ impl Session {
                                                         Some(movie) => {
                                                             _ = broadcast_tx.send(
                                                                 MessageTaskParticipant::Result(
-                                                                    *movie,
+                                                                    movie.content_id,
                                                                 ),
                                                             );
                                                             is_match = true;
@@ -144,15 +169,17 @@ impl Session {
                                                 if (movies.len() - 1)
                                                     == (*position - global_position)
                                                 {
-                                                    Session::add_movie(&mut movies, &mut votes, 1);
+                                                    Session::add_movie(&mut movies, &mut votes, 1)
+                                                        .await;
                                                 }
 
                                                 // Send new content
                                                 _ = users_senders.get(&user_id).unwrap().send(
                                                     MessageTaskParticipant::Content(vec![
-                                                        *movies
+                                                        movies
                                                             .get(*position - global_position)
-                                                            .unwrap(),
+                                                            .unwrap()
+                                                            .content_id,
                                                     ]),
                                                 );
                                             }
@@ -173,9 +200,10 @@ impl Session {
                                     users_positions =
                                         users_positions.into_iter().map(|(k, _)| (k, 0)).collect();
                                     nb_restart_demand = 0;
-                                    Session::add_movie(&mut movies, &mut votes, 2);
+                                    Session::add_movie(&mut movies, &mut votes, 2).await;
                                     _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
-                                        movies[0], movies[1],
+                                        movies[0].content_id,
+                                        movies[1].content_id,
                                     ]));
                                 }
                             }
@@ -193,7 +221,10 @@ impl Session {
                                 match users_positions.get_mut(&user_id) {
                                     Some(position) => {
                                         _ = tx.send(MessageTaskParticipant::Content(vec![
-                                            *movies.get(*position - global_position).unwrap(),
+                                            movies
+                                                .get(*position - global_position)
+                                                .unwrap()
+                                                .content_id,
                                         ]));
                                     }
                                     _ => {}
@@ -213,13 +244,13 @@ impl Session {
         }
     }
 
-    pub fn add_movie(
-        movies: &mut VecDeque<Uuid>,
+    pub async fn add_movie(
+        movies: &mut RecommenderDeque,
         votes: &mut VecDeque<HashMap<Uuid, bool>>,
         nb: usize,
     ) {
         for _ in 0..nb {
-            movies.push_back(Uuid::new_v4());
+            movies.push_back().await;
             votes.push_back(HashMap::new());
         }
     }

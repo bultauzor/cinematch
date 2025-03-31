@@ -1,7 +1,7 @@
 use crate::provider;
 
 pub mod cinematch;
-mod utils;
+pub mod utils;
 
 // #[allow(dead_code)]
 #[derive(Debug)]

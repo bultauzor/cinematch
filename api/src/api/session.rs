@@ -35,7 +35,12 @@ pub async fn start(
     input.participants.push(auth_context.user);
 
     let session_id = Uuid::new_v4();
-    let session = Session::new(input.participants.clone(), input.filters, session_id);
+    let session = Session::new(
+        input.participants.clone(),
+        input.filters,
+        session_id,
+        state.recommender.clone(),
+    );
 
     let mut sessions_lock = state.sessions.write().await;
     sessions_lock.insert(session_id, session);

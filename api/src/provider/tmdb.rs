@@ -7,7 +7,6 @@ use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::str::FromStr;
 use tokio::sync::{RwLock, RwLockReadGuard};
-use tracing::info;
 
 const BASE: &str = "https://api.themoviedb.org/3";
 const LANGUAGE: &str = "en-US";
@@ -114,7 +113,6 @@ impl Provider for TmdbProvider {
         let mut page = 1;
 
         loop {
-            info!("{BASE}/{content_type}/{id}/recommendations");
             let res = self
                 .client
                 .get(format!("{BASE}/{content_type}/{id}/recommendations"))

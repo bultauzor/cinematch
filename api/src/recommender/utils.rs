@@ -1,5 +1,7 @@
 use crate::db::DbHandler;
-use crate::model::recommendation::{Recommendation, RecommendationView};
+use crate::model::recommendation::{
+    Recommendation, RecommendationParametersInput, RecommendationView,
+};
 use crate::recommender::Error;
 use crate::recommender::cinematch::RecommenderCommand;
 use std::collections::VecDeque;
@@ -120,5 +122,49 @@ impl Drop for RecommendationsIterator {
         _ = self
             .tx
             .send(RecommenderCommand::ArcDec(self.recommendation_id));
+    }
+}
+
+pub struct RecommenderDeque {
+    iterator: RecommendationsIterator,
+    deque: VecDeque<RecommendationView>,
+}
+
+impl RecommenderDeque {
+    pub fn new(iterator: RecommendationsIterator) -> Self {
+        Self {
+            iterator,
+            deque: VecDeque::new(),
+        }
+    }
+
+    pub fn clear(&mut self) {
+        self.deque.clear();
+    }
+
+    pub fn len(&self) -> usize {
+        self.deque.len()
+    }
+
+    pub fn get(&self, pos: usize) -> Option<&RecommendationView> {
+        self.deque.get(pos)
+    }
+
+    pub fn pop_front(&mut self) -> Option<RecommendationView> {
+        self.deque.pop_front()
+    }
+
+    pub async fn push_back(&mut self) {
+        if let Ok(Some(rec)) = self.iterator.next().await {
+            self.deque.push_back(rec);
+        }
+    }
+}
+
+impl std::ops::Index<usize> for RecommenderDeque {
+    type Output = RecommendationView;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        self.deque.index(index)
     }
 }
