@@ -74,8 +74,7 @@ export class MoviePageComponentComponent implements OnInit {
 
         } catch (error) {
           console.error("Erreur :", error);
-          alert("OSKOUR MAUVAIS")
-          // await this.router.navigate([""]);
+          await this.router.navigate([""]);
         }
 
         this.getGrade()
@@ -119,7 +118,6 @@ export class MoviePageComponentComponent implements OnInit {
 
     } catch (error) {
       console.error("Erreur :", error);
-      alert("TEST")
     }
   }
 
@@ -171,11 +169,11 @@ export class MoviePageComponentComponent implements OnInit {
         }
 
         console.log("Note envoyée avec succès :", grade);
-        alert("Note soumise avec succès !");
+
       } catch (error) {
         console.error("Erreur :", error);
-        alert("Erreur lors de l'envoi de la notefdsfdsfsd");
       }
+
 
     }
   }
