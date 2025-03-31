@@ -6,6 +6,7 @@ use axum::extract::{Query, State};
 use axum::routing::get;
 use axum::{Json, Router};
 use std::collections::HashMap;
+use tracing::error;
 
 pub async fn search(
     State(api_handler_state): State<ApiHandlerState>,
@@ -15,7 +16,14 @@ pub async fn search(
         .get("query")
         .ok_or(ApiError::bad_request("No `query` parameter".into()))?;
 
-    let search_results = api_handler_state.provider.search(query).await?;
+    let search_results = api_handler_state
+        .provider
+        .search(query)
+        .await
+        .map_err(|err| {
+            error!(error=?err);
+            ApiError::internal("Search failed")
+        })?;
 
     let mut res = Vec::with_capacity(search_results.len());
     for search_result in search_results {

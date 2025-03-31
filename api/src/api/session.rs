@@ -12,7 +12,6 @@ use axum::routing::{get, post};
 use axum::{Extension, Json, Router};
 use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
 use tokio::sync::broadcast;
 use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
 use tracing::warn;
@@ -36,7 +35,12 @@ pub async fn start(
     input.participants.push(auth_context.user);
 
     let session_id = Uuid::new_v4();
-    let session = Session::new(input.participants.clone(), input.filters, session_id);
+    let session = Session::new(
+        input.participants.clone(),
+        input.filters,
+        session_id,
+        state.recommender.clone(),
+    );
 
     let mut sessions_lock = state.sessions.write().await;
     sessions_lock.insert(session_id, session);

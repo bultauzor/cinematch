@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from recommendations where recommendation_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "676b03234dd4770bcd0eef5772d47b81bacd9d8c072490c648f6d7f0ea82101b"
+}

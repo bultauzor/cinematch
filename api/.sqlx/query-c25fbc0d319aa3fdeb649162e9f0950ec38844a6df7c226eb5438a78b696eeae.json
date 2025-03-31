@@ -1,0 +1,12 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "refresh materialized view contents_seen_mrated;",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": []
+  },
+  "hash": "c25fbc0d319aa3fdeb649162e9f0950ec38844a6df7c226eb5438a78b696eeae"
+}
