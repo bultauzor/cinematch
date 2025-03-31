@@ -1,10 +1,10 @@
 pub mod auth;
+pub mod content;
 pub mod errors;
 pub mod friends;
 mod invitations;
 pub mod search;
 pub mod seen;
-pub mod content;
 mod session;
 
 use axum::body::Body;
@@ -82,7 +82,9 @@ pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
         .nest("/seen", seen::seen_router(api_handler.clone()))
         .nest("/session", session::session_router(api_handler.clone()))
         .nest("/friends", friends::friends_router(api_handler.clone()))
-        .nest("/invitations", invitations::invitations_router(api_handler.clone()),
+        .nest(
+            "/invitations",
+            invitations::invitations_router(api_handler.clone()),
         )
         .nest("/seen", seen::seen_router(api_handler))
         .layer(axum::middleware::from_fn(move |req, next| {

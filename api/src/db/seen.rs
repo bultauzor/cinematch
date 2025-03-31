@@ -57,7 +57,7 @@ impl DbHandler {
                     release_date: c.release_date,
                     genres: genres.into_iter().map(|row| row.genre).collect(),
                     backdrop: c.backdrop,
-                    vote_average: c.vote_average.unwrap_or_default()
+                    vote_average: c.vote_average.unwrap_or_default(),
                 },
                 grade: c.grade,
             });

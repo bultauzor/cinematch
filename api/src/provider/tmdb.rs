@@ -165,7 +165,9 @@ impl ResponseResult {
                 })
                 .map(ToString::to_string)
                 .collect(),
-            backdrop: self.backdrop_path.map(|p| format!("https://image.tmdb.org/t/p/w1280{p}")),
+            backdrop: self
+                .backdrop_path
+                .map(|p| format!("https://image.tmdb.org/t/p/w1280{p}")),
             vote_average: self.vote_average,
             vote_count: self.vote_count,
         };
