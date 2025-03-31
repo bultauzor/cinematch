@@ -1,7 +1,6 @@
 use crate::model::session::{
     MessageApiTask, MessageParticipantTask, MessageTaskParticipant, TypeMessage,
 };
-use serde::Serialize;
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use tokio::sync::broadcast;

@@ -12,7 +12,6 @@ use axum::routing::{get, post};
 use axum::{Extension, Json, Router};
 use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
 use tokio::sync::broadcast;
 use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
 use tracing::warn;
