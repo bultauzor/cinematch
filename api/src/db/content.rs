@@ -231,4 +231,12 @@ impl DbHandler {
 
         Ok(res.vote_average.unwrap_or_default())
     }
+
+    pub async fn get_genres(&self) -> Result<Vec<String>, sqlx::Error> {
+        let res = sqlx::query!("select distinct genre from contents_genres")
+            .fetch_all(&self.pool)
+            .await?;
+
+        Ok(res.into_iter().map(|g| g.genre).collect())
+    }
 }

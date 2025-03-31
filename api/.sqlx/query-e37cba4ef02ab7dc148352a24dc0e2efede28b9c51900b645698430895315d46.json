@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select distinct genre from contents_genres",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "genre",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "e37cba4ef02ab7dc148352a24dc0e2efede28b9c51900b645698430895315d46"
+}
