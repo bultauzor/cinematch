@@ -88,6 +88,7 @@ pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
             "/invitations",
             invitations::invitations_router(api_handler.clone()),
         )
+        .nest("/content", content::content_router(api_handler.clone()))
         .layer(axum::middleware::from_fn(move |req, next| {
             auth_middleware(req, next, public_key)
         }))
