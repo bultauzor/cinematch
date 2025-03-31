@@ -15,7 +15,7 @@ impl DbHandler {
         Ok(res)
     }
 
-    pub async fn create_invitation(
+    pub async fn create_invitation_friends(
         &self,
         user_id: Uuid,
         username: String,

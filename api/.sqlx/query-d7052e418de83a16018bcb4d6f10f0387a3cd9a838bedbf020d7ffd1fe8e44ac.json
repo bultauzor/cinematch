@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                insert into friend_requests (user_id, friend_asked_id) values ($1, $2)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "d7052e418de83a16018bcb4d6f10f0387a3cd9a838bedbf020d7ffd1fe8e44ac"
+}

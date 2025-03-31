@@ -12,7 +12,7 @@ pub async fn get_invitations(
 ) -> Result<Json<Vec<FriendRequest>>, ApiError> {
     let res = api_handler_state
         .db
-        .get_invitations(auth_context.user)
+        .get_invitations_friends(auth_context.user)
         .await?;
 
     Ok(Json(res))

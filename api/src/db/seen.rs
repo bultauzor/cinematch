@@ -21,6 +21,8 @@ impl DbHandler {
                    c.overview,
                    c.poster,
                    c.release_date,
+                   c.backdrop,
+                   c.vote_average,
                    s.grade
             from contents_seen as s
             join contents as c on s.content_id=c.content_id
@@ -54,6 +56,8 @@ impl DbHandler {
                     poster: c.poster,
                     release_date: c.release_date,
                     genres: genres.into_iter().map(|row| row.genre).collect(),
+                    backdrop: c.backdrop,
+                    vote_average: c.vote_average.unwrap_or_default(),
                 },
                 grade: c.grade,
             });

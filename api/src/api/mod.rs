@@ -1,4 +1,5 @@
 pub mod auth;
+pub mod content;
 pub mod errors;
 pub mod friends;
 mod invitations;
@@ -79,9 +80,11 @@ pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
         .route("/auth_ping", get(auth_ping))
         .merge(search::search_router(api_handler.clone()))
         .nest("/seen", seen::seen_router(api_handler.clone()))
-        .nest("/session", session::session_router(api_handler))
+        .nest("/session", session::session_router(api_handler.clone()))
         .nest("/friends", friends::friends_router(api_handler.clone()))
-        .nest("/invitations", invitations::invitations_router(api_handler.clone()),
+        .nest(
+            "/invitations",
+            invitations::invitations_router(api_handler.clone()),
         )
         .nest("/seen", seen::seen_router(api_handler))
         .layer(axum::middleware::from_fn(move |req, next| {

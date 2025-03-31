@@ -120,8 +120,9 @@ struct ResponseResult {
     genre_ids: Option<Vec<usize>>,
     #[serde(alias = "first_air_date")]
     release_date: Option<String>,
-    vote_average: Option<f32>,
-    vote_count: Option<usize>,
+    vote_average: Option<f64>,
+    vote_count: Option<i32>,
+    backdrop_path: Option<String>,
 }
 
 impl ResponseResult {
@@ -164,6 +165,11 @@ impl ResponseResult {
                 })
                 .map(ToString::to_string)
                 .collect(),
+            backdrop: self
+                .backdrop_path
+                .map(|p| format!("https://image.tmdb.org/t/p/w1280{p}")),
+            vote_average: self.vote_average,
+            vote_count: self.vote_count,
         };
 
         Some(Ok(content))

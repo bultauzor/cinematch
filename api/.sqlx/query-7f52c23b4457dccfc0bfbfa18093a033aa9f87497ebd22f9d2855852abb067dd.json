@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            select content_id,\n                   provider_id,\n                   updated_at,\n                   content_type as \"content_type: ContentType\",\n                   title,\n                   overview,\n                   poster,\n                   release_date\n            from contents\n            where provider_id = $1",
+  "query": "\n            select content_id,\n                   provider_id,\n                   updated_at,\n                   content_type as \"content_type: ContentType\",\n                   title,\n                   overview,\n                   poster,\n                   release_date,\n                   backdrop,\n                   vote_average,\n                   vote_count\n            from contents\n            where provider_id = $1",
   "describe": {
     "columns": [
       {
@@ -52,6 +52,21 @@
         "ordinal": 7,
         "name": "release_date",
         "type_info": "Date"
+      },
+      {
+        "ordinal": 8,
+        "name": "backdrop",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "vote_average",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 10,
+        "name": "vote_count",
+        "type_info": "Int4"
       }
     ],
     "parameters": {
@@ -67,8 +82,11 @@
       false,
       false,
       true,
+      true,
+      true,
+      true,
       true
     ]
   },
-  "hash": "55e1af8dfda549512132de094d9ae1b34f1823eb725260a7e6977421b64bdc91"
+  "hash": "7f52c23b4457dccfc0bfbfa18093a033aa9f87497ebd22f9d2855852abb067dd"
 }

@@ -24,6 +24,9 @@ create table if not exists contents
     title        text         not null,
     overview     text         not null,
     poster       text,
+    backdrop     text,
+    vote_count   integer,
+    vote_average float,
     release_date date
 );
 

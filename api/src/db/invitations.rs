@@ -3,7 +3,10 @@ use crate::db::DbHandler;
 use uuid::Uuid;
 
 impl DbHandler {
-    pub async fn get_invitations(&self, user_id: Uuid) -> Result<Vec<FriendRequest>, sqlx::Error> {
+    pub async fn get_invitations_friends(
+        &self,
+        user_id: Uuid,
+    ) -> Result<Vec<FriendRequest>, sqlx::Error> {
         let friend_requests = sqlx::query_as!(
             FriendRequest,
             r#"
