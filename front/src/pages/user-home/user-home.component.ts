@@ -5,10 +5,8 @@ import { MoovieDisplayComponent } from '../../components/molecules/moovie-displa
 import {NotificationCardComponent} from '../../components/molecules/notification-card/notification-card.component';
 import {NgForOf, NgIf} from '@angular/common';
 import {environment} from '../../environments/environment';
-import {
-  FriendRequestsPopupComponent
-} from '../../components/molecules/friend-requests-popup/friend-requests-popup.component';
 import {ButtonComponent} from '../../components/atoms/button/button.component';
+import {FriendPopupComponent} from '../../components/molecules/friend-popup/friend-popup.component';
 
 @Component({
   selector: 'app-user-home',
@@ -18,9 +16,9 @@ import {ButtonComponent} from '../../components/atoms/button/button.component';
     MoovieDisplayComponent,
     NotificationCardComponent,
     NgForOf,
-    FriendRequestsPopupComponent,
     ButtonComponent,
-    NgIf
+    NgIf,
+    FriendPopupComponent
   ],
   templateUrl: './user-home.component.html',
   styleUrl: './user-home.component.css'
@@ -28,7 +26,7 @@ import {ButtonComponent} from '../../components/atoms/button/button.component';
 export class UserHomeComponent {
   friends_invitation: FriendRequest[] = [];
   session_invitation: SessionRequest[] = [];
-  friend_request_popup: boolean = false;
+  friend_popup: boolean = false;
 
   async ngOnInit(): Promise<void> {
     await this.request()
@@ -61,7 +59,8 @@ export class UserHomeComponent {
   }
 
   togglePopup(){
-    this.friend_request_popup = !this.friend_request_popup;
+    console.log("aaaaaaa")
+    this.friend_popup = !this.friend_popup;
   }
 }
 

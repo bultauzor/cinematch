@@ -1,0 +1,22 @@
+<div class="popup-overlay">
+  <div class="friends-container">
+    <h2 class="title">Your Friends</h2>
+
+    <ul *ngIf="friends.length > 0; else noFriends" class="friends-list">
+      <li *ngFor="let friend of friends" class="friend-item">
+        {{ friend.friend_username }}
+      </li>
+    </ul>
+
+    <ng-template #noFriends>
+      <p class="text">You have no friends yet.</p>
+    </ng-template>
+
+    <div class="button-group">
+      <app-button type="red" text="Add Friend" (click)="openRequestPopup()" />
+      <app-button type="border_red" text="Back" (click)="close()" />
+    </div>
+
+    <app-friend-requests-popup *ngIf="showRequestPopup" (closePopup)="closeRequestPopup()" />
+  </div>
+</div>

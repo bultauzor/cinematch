@@ -5,5 +5,5 @@
 </div>
 <app-moovie-display />
 <app-button type="red" text="Friend requests" (click)="togglePopup()" />
-<app-friend-requests-popup *ngIf="friend_request_popup" (closePopup)="togglePopup()" />
+<app-friend-popup *ngIf="friend_popup" (closePopup)="togglePopup()" />
 <app-home-footer />
