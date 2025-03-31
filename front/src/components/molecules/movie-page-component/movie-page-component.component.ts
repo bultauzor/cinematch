@@ -68,7 +68,8 @@ export class MoviePageComponentComponent implements OnInit {
             console.log("Données du film :", this.content);
             console.log(`Titre: ${this.content.title}`);
             console.log(`Résumé: ${this.content.overview}`);
-            console.log(`Genres: ${this.content.genres.join(", ")}`);
+            console.log(`Genres: ${this.content.genres}`);
+            console.log(`Content: ${this.content}`);
           }
 
         } catch (error) {
@@ -135,11 +136,12 @@ export class MoviePageComponentComponent implements OnInit {
     if(this.isSeen) {
       try {
         const response = await fetch(environment.api_url + "/seen/me/" + this.movieID + "/grade", {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             'Authorization': `Bearer ${this.token}`
           },
+          body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
