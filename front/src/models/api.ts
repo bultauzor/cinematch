@@ -19,5 +19,7 @@ export type Content = {
     poster?: string,
     release_date: string,
     genres: string[],
+    vote_average: number,
+    backdrop: string
 }
 
