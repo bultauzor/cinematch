@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, NgZone} from '@angular/core';
 import {ButtonComponent} from '../../atoms/button/button.component';
 import {FilterListComponent} from '../filter-list/filter-list.component';
 import {Router} from '@angular/router';
@@ -15,12 +15,30 @@ import {WebSocketService} from '../../../services/websocket.service';
   styleUrl: './movies-swipe-start-component.component.css'
 })
 export class MoviesSwipeStartComponentComponent {
-  constructor(private router: Router, private webSocketService: WebSocketService) {}
+  constructor(private router: Router, private webSocketService: WebSocketService, private ngZone: NgZone) {}
 
-  friends = [{username: "alyrow", id: "ae14c115-dcff-4e20-8108-bf27087765db"},{username: "Skynox", id: ""},{username:"Lemieldesdauphin", id: ""}]
-  friends_username: string[] = this.friends.map(friend => friend.username);
+  friends: friend[] = []
+  friends_username: string[] = [];
   participants: string[] = [];
   filters: string[] = [];
+
+  async ngOnInit(): Promise<void> {
+    const token = localStorage.getItem('token');
+    if (token != null) {
+      const responseGetFriends = await fetch(environment.api_url + "/friends", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
+
+      })
+      this.ngZone.run(async () => {
+        this.friends = await responseGetFriends.json();
+        this.friends_username = this.friends.map(friend => friend.friend_username);
+      });
+    }
+  }
 
   async startSession() {
 
@@ -36,7 +54,7 @@ export class MoviesSwipeStartComponentComponent {
           },
           body: JSON.stringify({
             participants: this.participants.map((username) =>
-              this.friends.filter((elem) => elem.username == username)[0].id),
+              this.friends.filter((elem) => elem.friend_username == username)[0].friend_id),
             filters: this.filters
           }),
         })
@@ -59,4 +77,10 @@ export class MoviesSwipeStartComponentComponent {
   }
 
   protected readonly Object = Object;
+}
+
+type friend = {
+  user_id: string,
+  friend_id: string,
+  friend_username: string
 }
