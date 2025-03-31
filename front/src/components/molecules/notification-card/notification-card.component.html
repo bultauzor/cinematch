@@ -1,0 +1,19 @@
+<div class="host">
+  <div *ngIf="type == 'Session'" class="content">
+    <div class="text">
+      <h1>Movies swipe</h1>
+      <span>{{user_username}} invites you to come and choose a movie with together !</span>
+    </div>
+    <app-button class="button" type="border_red" text="Join the session" (click)="join_session(session_id? session_id : '')" />
+  </div>
+  <div *ngIf="type == 'Friend'" class="content">
+    <div class="text">
+      <h1>Friend invitation</h1>
+      <span>{{user_username}} want to be your friend !</span>
+    </div>
+    <div class="button">
+      <app-button type="border_red" text="Accept" (click)="accept_invitation(user_id? user_id : '')"/>
+      <app-button type="border_red" text="Refuse" (click)="refuse_invitation(user_id? user_id : '')"/>
+    </div>
+  </div>
+</div>

@@ -50,7 +50,7 @@ impl DbHandler {
             &friend_id,
             &user_id
         )
-        .execute(&self.pool)
+        .execute(&mut *trx)
         .await?;
 
         trx.commit().await?;
