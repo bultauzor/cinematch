@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {NgClass} from '@angular/common';
 import {HAMMER_GESTURE_CONFIG, HammerGestureConfig} from '@angular/platform-browser';
-import {Content} from '../../../models/api';
 import {Router} from '@angular/router';
 
 @Component({
@@ -26,16 +25,14 @@ export class MovieCardComponent {
   @Input() cardPosition: '' | 'absolute' = '';
   @Input() size: 'small' | 'big' = 'small';
   @Output() swipe = new EventEmitter<string>();
-  @Input() content?: Content;
+  @Input() content!: any;
 
-  constructor(private router: Router) {}
+  @Output() movieClicked = new EventEmitter<any>();
 
-  goToContentPage(){
-    this.router.navigate(['/page', this.content?.content_id], {
-      state: { contentview: this.content }
-    });
+
+  onClick(){
+    this.movieClicked.emit(this.content)
   }
-
 
   onSwipe(event: any) {
     if (event.direction === 2) {  // 2 correspond à swipe à gauche
@@ -44,4 +41,6 @@ export class MovieCardComponent {
       this.swipe.emit('right');
     }
   }
+
+
 }

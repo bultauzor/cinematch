@@ -5,21 +5,12 @@ import {FormsModule} from '@angular/forms';
 import {ButtonComponent} from '../../atoms/button/button.component';
 import {Content} from "../../../models/api";
 
-enum ContentType {
-  Movie = "Movie",
-  Show = "TV Show"
-}
+
 
 export interface SeenContent {
   content: Content;
   grade?: number;
 }
-
-
-
-
-
-
 @Component({
   selector: 'app-movie-page-component',
   imports: [
@@ -33,87 +24,149 @@ export interface SeenContent {
 })
 export class MoviePageComponentComponent implements OnInit {
   movieID: string | null | undefined;
-  movieData?: Content;
+  content: any;
   userRating: number = 5.0;
+  isSeen: boolean = false;
   sliderValue: number = 10;
   genres: string[] = ['Action', 'Adventure', 'Crime', 'Drama', 'Sci-Fi'];
 
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router) {
+    const navigation = this.router.getCurrentNavigation();
+    this.content = navigation?.extras.state?.['content'];
+    this.route.params.subscribe(async (params) => {
+      this.movieID = params['id'];
+      console.log('Test ID : ', this.movieID);
+    });
 
-  ngOnInit() {
+  }
 
-    const nav = this.router.getCurrentNavigation();
-    this.movieData = nav?.extras.state?.['content'];
+  async ngOnInit() {
 
-    if(!this.movieData){
-      this.movieID = this.route.snapshot.paramMap.get('id');
-    } else {
+    console.log(this.content)
 
-
-      this.route.params.subscribe(async (params) => {
-        this.movieID = params['id'];
-        console.log('Test ID : ', this.movieID);
-
-
-        if (this.movieID) {
-          try {
-            const contentResponse = await fetch(environment.api_url + "/content/" + this.movieID, {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              }
-            });
-
-            if (!contentResponse.ok) {
-              throw new Error("Erreur lors de la récupération du film");
+    if (this.content == undefined) {
+      if (this.movieID) {
+        try {
+          const contentResponse = await fetch(environment.api_url + "/content/" + this.movieID, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
             }
+          });
 
-            this.movieData = await contentResponse.json();
-            if (this.movieData) {
-              console.log("Données du film :", this.movieData);
-              console.log(`Titre: ${this.movieData.title}`);
-              console.log(`Résumé: ${this.movieData.overview}`);
-              console.log(`Genres: ${this.movieData.genres.join(", ")}`);
-            }
-
-            try {
-              const seenResponse = await fetch(environment.api_url + "/seen/me/" + this.movieID, {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                }
-              });
-
-              if (!seenResponse.ok) {
-                throw new Error("Erreur lors de la récupération du film");
-              }
-
-              const seenContents: SeenContent[] = await seenResponse.json();
-
-              // Vérifier si le film est dans la liste et récupérer sa note
-              const seenMovie = seenContents.find(content => content.content.content_id === this.movieID);
-
-              if (seenMovie) {
-                console.log(`Le film a été vu. Note : ${seenMovie.grade ?? "Aucune note"}`);
-              } else {
-                console.log("Le film n'a pas été regardé par l'utilisateur.");
-              }
-
-            } catch (error) {
-              console.error("Erreur :", error);
-            }
-
-
-          } catch (error) {
-            console.error("Erreur :", error);
-            alert("OSKOUR MAUVAIS")
-            // await this.router.navigate([""]);
+          if (!contentResponse.ok) {
+            throw new Error("Erreur lors de la récupération du film");
           }
+
+          this.content = await contentResponse.json();
+          if (this.content) {
+            console.log("Données du film :", this.content);
+            console.log(`Titre: ${this.content.title}`);
+            console.log(`Résumé: ${this.content.overview}`);
+            console.log(`Genres: ${this.content.genres.join(", ")}`);
+          }
+
+        } catch (error) {
+          console.error("Erreur :", error);
+          alert("OSKOUR MAUVAIS")
+          // await this.router.navigate([""]);
         }
-      });
+
+        try {
+          const seenResponse = await fetch(environment.api_url + "/seen/me/" + this.movieID, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            }
+          });
+
+          if (!seenResponse.ok) {
+            throw new Error("Erreur lors de la récupération du film");
+          }
+
+          const seenContents: SeenContent[] = await seenResponse.json();
+          const seenMovie = seenContents.find(content => content.content.content_id === this.movieID);
+
+          if (seenMovie) {
+
+            if (seenMovie) {
+              this.isSeen = true;
+              if (seenMovie.grade !== undefined) {
+                this.sliderValue = seenMovie.grade * 2;
+                this.userRating = seenMovie.grade;
+              }
+            }
+            console.log(`Le film a été vu. Note : ${seenMovie.grade ?? "Aucune note"}`);
+          } else {
+            this.isSeen = false;
+            console.log("Le film n'a pas été regardé par l'utilisateur.");
+          }
+
+        } catch (error) {
+          console.error("Erreur :", error);
+          alert("TEST")
+        }
+      }
     }
   }
+
+  async submitGrade() {
+    if (!this.movieID) return;
+
+
+    const grade = this.userRating;
+    const payload = {
+      content_id: this.movieID,
+      grade: grade
+    };
+
+    if(this.isSeen) {
+
+
+      try {
+        const response = await fetch(environment.api_url + "/seen/me", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error("Erreur lors de l'enregistrement de la note");
+        }
+
+        console.log("Note envoyée avec succès :", grade);
+        alert("Note soumise avec succès !");
+      } catch (error) {
+        console.error("Erreur :", error);
+        alert("Erreur lors de l'envoi de la note");
+      }
+    } else {
+
+      try {
+        const response = await fetch(environment.api_url + "/seen/me/" + this.movieID + "/grade", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Erreur lors de l'enregistrement de la note");
+        }
+
+        console.log("Note envoyée avec succès :", grade);
+        alert("Note soumise avec succès !");
+      } catch (error) {
+        console.error("Erreur :", error);
+        alert("Erreur lors de l'envoi de la note");
+      }
+
+    }
+  }
+
 
   updateRating(): void {
     this.userRating = this.sliderValue / 2;

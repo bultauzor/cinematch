@@ -1,4 +1,4 @@
-<div [ngClass]="['card',cardPosition,size,swipeState]" (swipe)="onSwipe($event)">
+<div [ngClass]="['card',cardPosition,size,swipeState]" (swipe)="onSwipe($event)" (click)="onClick()">
   <div class="poster">
     <img [src]="posterUrl" alt="Movie Poster" />
   </div>

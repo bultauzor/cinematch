@@ -19,7 +19,7 @@
 }
 
 .movie-poster {
-  background-color: #a30000;
+  background-color: rgba(20, 40, 70, 0.8);
   height: 280px;
   display: flex;
   justify-content: center;
@@ -27,6 +27,15 @@
   margin-bottom: 20px;
   border-radius: 5px;
 }
+
+.movie-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+
 
 .movie-info {
   display: flex;
