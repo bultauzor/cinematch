@@ -10,6 +10,7 @@ import {ContentType} from "../../models/api";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {FiltersService} from "../../services/filters.service";
 import {FiltersService} from "../../services/filters.service";
+import {Router} from '@angular/router';
 
 @Component({
   selector: "app-user-home",
@@ -122,6 +123,8 @@ export class UserHomeComponent implements OnInit {
     );
     this.friends_invitation = await friend_invitations_result.json();
   }
+
+
 }
 
 type SessionRequest = {

@@ -4,6 +4,7 @@ import {SearchService} from "../../../services/search.service";
 import {Content} from "../../../models/api";
 import {MovieCardComponent} from "../../atoms/movie-card/movie-card.component";
 import {RecommendationsService} from "../../../services/recommendations.service";
+import {Router} from '@angular/router';
 
 @Component({
   imports: [
@@ -19,7 +20,11 @@ export class MoovieDisplayComponent implements OnInit {
   moviesRecommendation: Content[] = [];
   searchMode = false
 
-  constructor(private searchService: SearchService, private recommendationsService: RecommendationsService) {
+  constructor(private searchService: SearchService, private recommendationsService: RecommendationsService, private router: Router) {
+  }
+
+  goToMovieDetails(content: any) {
+    this.router.navigate(['/page', content.id], { state: { content } });
   }
 
   ngOnInit(): void {
