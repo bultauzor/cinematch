@@ -3,8 +3,12 @@ import {HomeFooterComponent} from '../../components/molecules/home-footer/home-f
 import {HomeHeaderComponent} from '../../components/molecules/home-header/home-header.component';
 import { MoovieDisplayComponent } from '../../components/molecules/moovie-display/moovie-display.component';
 import {NotificationCardComponent} from '../../components/molecules/notification-card/notification-card.component';
-import {NgForOf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {environment} from '../../environments/environment';
+import {
+  FriendRequestsPopupComponent
+} from '../../components/molecules/friend-requests-popup/friend-requests-popup.component';
+import {ButtonComponent} from '../../components/atoms/button/button.component';
 
 @Component({
   selector: 'app-user-home',
@@ -13,7 +17,10 @@ import {environment} from '../../environments/environment';
     HomeHeaderComponent,
     MoovieDisplayComponent,
     NotificationCardComponent,
-    NgForOf
+    NgForOf,
+    FriendRequestsPopupComponent,
+    ButtonComponent,
+    NgIf
   ],
   templateUrl: './user-home.component.html',
   styleUrl: './user-home.component.css'
@@ -21,6 +28,7 @@ import {environment} from '../../environments/environment';
 export class UserHomeComponent {
   friends_invitation: FriendRequest[] = [];
   session_invitation: SessionRequest[] = [];
+  friend_request_popup: boolean = false;
 
   async ngOnInit(): Promise<void> {
     await this.request()
@@ -50,6 +58,10 @@ export class UserHomeComponent {
       },
     })
     this.friends_invitation = await friend_invitations_result.json();
+  }
+
+  togglePopup(){
+    this.friend_request_popup = !this.friend_request_popup;
   }
 }
 

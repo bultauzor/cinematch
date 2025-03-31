@@ -4,4 +4,6 @@
   <app-notification-card type="Friend" *ngFor="let friend of friends_invitation" [user_id]="friend.user_id" [user_username]="friend.user_username" (refreshParent)="refreshComponent()"/>
 </div>
 <app-moovie-display />
+<app-button type="red" text="Friend requests" (click)="togglePopup()" />
+<app-friend-requests-popup *ngIf="friend_request_popup" (closePopup)="togglePopup()" />
 <app-home-footer />
