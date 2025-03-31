@@ -132,60 +132,54 @@ impl Session {
                             // User vote
                             MessageParticipantTask::Vote(user_vote) => {
                                 info!(?user_id, "Vote");
-                                match users_positions.get_mut(&user_id) {
-                                    Some(position) => {
-                                        if let Some(map) = votes.get_mut(*position) {
-                                            map.insert(user_id, user_vote);
-                                            *position += 1;
+                                if let Some(position) = users_positions.get_mut(&user_id) {
+                                    if let Some(map) = votes.get_mut(*position) {
+                                        map.insert(user_id, user_vote);
+                                        *position += 1;
 
-                                            let mut is_match = false;
+                                        let mut is_match = false;
 
-                                            // If all participants voted for a movie
-                                            if map.len() == self.participants.len() {
-                                                // If all votes are true - it's a match
-                                                if map.values().all(|&value| value) {
-                                                    match movies.get(*position - global_position) {
-                                                        Some(movie) => {
-                                                            _ = broadcast_tx.send(
-                                                                MessageTaskParticipant::Result(
-                                                                    movie.content_id,
-                                                                ),
-                                                            );
-                                                            is_match = true;
-                                                        }
-                                                        _ => {}
-                                                    }
-
-                                                // If at least one vote is false
-                                                } else {
-                                                    movies.pop_front();
-                                                    global_position += 1;
-                                                }
-                                            }
-
-                                            info!(is_match);
-
-                                            if !is_match {
-                                                if (movies.len() - 1)
-                                                    == (*position - global_position)
-                                                {
-                                                    Session::add_movie(&mut movies, &mut votes, 1)
-                                                        .await;
+                                        // If all participants voted for a movie
+                                        if map.len() == self.participants.len() {
+                                            // If all votes are true - it's a match
+                                            if map.values().all(|&value| value) {
+                                                if let Some(movie) = movies.get(*position - global_position) {
+                                                    _ = broadcast_tx.send(
+                                                        MessageTaskParticipant::Result(
+                                                            movie.content_id,
+                                                        ),
+                                                    );
+                                                    is_match = true;
                                                 }
 
-                                                // Send new content
-                                                _ = users_senders.get(&user_id).unwrap().send(
-                                                    MessageTaskParticipant::Content(vec![
-                                                        movies
-                                                            .get(*position - global_position)
-                                                            .unwrap()
-                                                            .content_id,
-                                                    ]),
-                                                );
+                                            // If at least one vote is false
+                                            } else {
+                                                movies.pop_front();
+                                                global_position += 1;
                                             }
                                         }
+
+                                        info!(is_match);
+
+                                        if !is_match {
+                                            if (movies.len() - 1)
+                                                == (*position - global_position)
+                                            {
+                                                Session::add_movie(&mut movies, &mut votes, 1)
+                                                    .await;
+                                            }
+
+                                            // Send new content
+                                            _ = users_senders.get(&user_id).unwrap().send(
+                                                MessageTaskParticipant::Content(vec![
+                                                    movies
+                                                        .get(*position - global_position)
+                                                        .unwrap()
+                                                        .content_id,
+                                                ]),
+                                            );
+                                        }
                                     }
-                                    None => {}
                                 }
                             }
                             // User restart demand
@@ -198,7 +192,7 @@ impl Session {
                                     votes.clear();
                                     global_position = 0;
                                     users_positions =
-                                        users_positions.into_iter().map(|(k, _)| (k, 0)).collect();
+                                        users_positions.into_keys().map(|k| (k, 0)).collect();
                                     nb_restart_demand = 0;
                                     Session::add_movie(&mut movies, &mut votes, 2).await;
                                     _ = broadcast_tx.send(MessageTaskParticipant::Content(vec![
@@ -218,16 +212,13 @@ impl Session {
                                 // Informs all connected participants that a new participant has connected
                                 _ = broadcast_tx.send(MessageTaskParticipant::UserJoined(user_id));
 
-                                match users_positions.get_mut(&user_id) {
-                                    Some(position) => {
-                                        _ = tx.send(MessageTaskParticipant::Content(vec![
-                                            movies
-                                                .get(*position - global_position)
-                                                .unwrap()
-                                                .content_id,
-                                        ]));
-                                    }
-                                    _ => {}
+                                if let Some(position) = users_positions.get_mut(&user_id) {
+                                    _ = tx.send(MessageTaskParticipant::Content(vec![
+                                        movies
+                                            .get(*position - global_position)
+                                            .unwrap()
+                                            .content_id,
+                                    ]));
                                 }
                             }
                             MessageApiTask::Leave(user_id) => {
