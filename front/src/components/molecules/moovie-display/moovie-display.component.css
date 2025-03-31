@@ -3,8 +3,8 @@
   grid-template-columns: repeat(auto-fill, 16rem);
   gap: 20px;
   column-gap: 20px;
-  padding: 10vh;
-  margin-top: 20px;
+  padding: 0 5vw 10vh 5vw;
+  margin-top: 110px;
 }
 
 .nothing {
