@@ -57,7 +57,7 @@ pub async fn create_invitation(
 ) -> Result<(), ApiError> {
     api_handler_state
         .db
-        .create_invitation(auth_context.user, input.to_string())
+        .create_invitation_friend(auth_context.user, input.to_string())
         .await?;
 
     Ok(())

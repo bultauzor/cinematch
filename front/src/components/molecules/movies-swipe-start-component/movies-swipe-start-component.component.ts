@@ -17,7 +17,7 @@ import {WebSocketService} from '../../../services/websocket.service';
 export class MoviesSwipeStartComponentComponent {
   constructor(private router: Router, private webSocketService: WebSocketService) {}
 
-  friends = [{username: "alyrow", id: "cd351c08-03df-40f5-b9f9-14727c786719"},{username: "Skynox", id: ""},{username:"Lemieldesdauphin", id: ""}]
+  friends = [{username: "alyrow", id: "ae14c115-dcff-4e20-8108-bf27087765db"},{username: "Skynox", id: ""},{username:"Lemieldesdauphin", id: ""}]
   friends_username: string[] = this.friends.map(friend => friend.username);
   participants: string[] = [];
   filters: string[] = [];

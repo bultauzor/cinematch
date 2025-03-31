@@ -1,0 +1,36 @@
+.host {
+  background-color: #1C2541;
+  width: 50%;
+  border-radius: 10px;
+  margin: 0.2em auto;
+  color: white;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+
+  h1 {
+    font-family: "BebasNeue", serif;
+    margin-inline: 0.5em;
+    margin-block: 0.2em;
+  }
+
+  span {
+    font-family: "Montserrat", serif;
+    margin-inline: 1em;
+    margin-bottom: 0.2em;
+  }
+}
+
+.button {
+  margin-inline: 2em;
+}

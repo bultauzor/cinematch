@@ -1,9 +1,10 @@
+use tracing::info;
 use crate::api::friends::FriendRequest;
 use crate::db::DbHandler;
 use uuid::Uuid;
 
 impl DbHandler {
-    pub async fn get_invitations(&self, user_id: Uuid) -> Result<Vec<FriendRequest>, sqlx::Error> {
+    pub async fn get_invitations_friends(&self, user_id: Uuid) -> Result<Vec<FriendRequest>, sqlx::Error> {
         let friend_requests = sqlx::query_as!(
             FriendRequest,
             r#"
@@ -38,13 +39,14 @@ impl DbHandler {
         .execute(&mut *trx)
         .await?;
 
+        info!("Supression");
         sqlx::query!(
             r#"
             delete from friend_requests where friend_asked_id = $1
             "#,
             &friend_id
         )
-        .execute(&self.pool)
+        .execute(&mut *trx)
         .await?;
 
         trx.commit().await?;
