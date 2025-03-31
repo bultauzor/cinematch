@@ -78,8 +78,7 @@ pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
     Router::new()
         .route("/auth_ping", get(auth_ping))
         .merge(search::search_router(api_handler.clone()))
-        .nest("/seen", seen::seen_router(api_handler.clone()))
-        .nest("/session", session::session_router(api_handler))
+        .nest("/session", session::session_router(api_handler.clone()))
         .nest("/friends", friends::friends_router(api_handler.clone()))
         .nest("/invitations", invitations::invitations_router(api_handler.clone()),
         )

@@ -6,6 +6,7 @@ use uuid::Uuid;
 pub struct SessionRequest {
     pub owner_id: Uuid,
     pub session_id: Uuid,
+    pub owner_username: String
 }
 
 impl DbHandler {
@@ -13,11 +14,13 @@ impl DbHandler {
         let session_requests = sqlx::query_as!(
             SessionRequest,
             r#"
-            select
-                owner_id,
-                session_id
-            from session_requests
-            where user_id = $1
+            select 
+                sr.owner_id,
+                sr.session_id,
+                u.username as owner_username
+            from session_requests sr
+            join users u ON sr.owner_id = u.user_id
+            where sr.user_id = $1
             "#,
             &user_id
         )
@@ -55,6 +58,17 @@ impl DbHandler {
         )
         .execute(&self.pool)
         .await?;
+
+        Ok(())
+    }
+    pub async fn clean_invitations(&self, ) -> Result<(), sqlx::Error> {
+        sqlx::query!(
+            r#"
+            delete from session_requests
+            "#
+        )
+            .execute(&self.pool)
+            .await?;
 
         Ok(())
     }

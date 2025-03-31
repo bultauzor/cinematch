@@ -1,4 +1,3 @@
-use tracing::info;
 use crate::api::friends::FriendRequest;
 use crate::db::DbHandler;
 use uuid::Uuid;
@@ -39,7 +38,6 @@ impl DbHandler {
         .execute(&mut *trx)
         .await?;
 
-        info!("Supression");
         sqlx::query!(
             r#"
             delete from friend_requests where friend_asked_id = $1

@@ -15,7 +15,7 @@ use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
 use tokio::sync::broadcast;
 use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
-use tracing::warn;
+use tracing::{info, warn};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -149,7 +149,7 @@ pub async fn get_invitations(
     for session_request in &session_requests {
         let mut sessions_lock = state.sessions.write().await;
         if let Some(session) = sessions_lock.clone().get(&session_request.session_id) {
-            if !session.tx.is_closed() {
+            if session.tx.is_closed() {
                 _ = state
                     .db
                     .delete_session_invitations(session_request.session_id)

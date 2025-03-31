@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                delete from friends\n                where (user_id = $1 and friend_id = $2) or (user_id = $2 and friend_id = $1)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "16c7b1d9929ae9ffc53fff91859e9230401bddb40befb57b6acaec2ad617ee62"
+}

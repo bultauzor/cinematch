@@ -86,6 +86,8 @@ async fn main() {
             std::process::exit(1);
         }
     };
+    
+    _ = db.clean_invitations().await;
 
     let tmdb_provider = match TmdbProvider::new(&tmdb_token) {
         Some(tmdb_provider) => tmdb_provider,
