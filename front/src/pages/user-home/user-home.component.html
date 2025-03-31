@@ -1,9 +1,9 @@
 <app-home-header type="user_home" />
 <div class="notifications">
-  <app-notification-card type="Session" *ngFor="let session of session_invitation" [user_id]="session.owner_id" [user_username]="session.owner_username" [session_id]="session.session_id" (refreshParent)="refreshComponent()"/>
-  <app-notification-card type="Friend" *ngFor="let friend of friends_invitation" [user_id]="friend.user_id" [user_username]="friend.user_username" (refreshParent)="refreshComponent()"/>
+  <app-notification-card type="Session" *ngFor="let session of session_invitation" [user_id]="session.owner_id"
+    [user_username]="session.owner_username" [session_id]="session.session_id" (refreshParent)="refreshComponent()" />
+  <app-notification-card type="Friend" *ngFor="let friend of friends_invitation" [user_id]="friend.user_id"
+    [user_username]="friend.user_username" (refreshParent)="refreshComponent()" />
 </div>
 <app-moovie-display />
-<app-button type="red" text="Friend requests" (click)="togglePopup()" />
-<app-friend-popup *ngIf="friend_popup" (closePopup)="togglePopup()" />
 <app-home-footer />

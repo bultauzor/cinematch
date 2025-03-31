@@ -1,15 +1,22 @@
-import { Component, ElementRef, inject, Input, ViewChild,  OnInit } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { NgIf, NgOptimizedImage } from "@angular/common";
+import { FriendPopupComponent } from "../../molecules/friend-popup/friend-popup.component";
 import { environment } from "../../../environments/environment";
-
-type ButtonOption = "logout";
 
 @Component({
   selector: "app-avatar",
   imports: [
     RouterLink,
     NgOptimizedImage,
+    FriendPopupComponent,
     NgIf,
   ],
   templateUrl: "./avatar.component.html",
@@ -25,12 +32,13 @@ export class AvatarComponent implements OnInit {
   @Input()
   size: number = 70;
   menuVisible = false;
+  friend_popup: boolean = false;
 
   @ViewChild("fileInput", { static: false })
   fileInput!: ElementRef;
 
   ngOnInit(): void {
-    this.updateAvartar()
+    this.updateAvartar();
   }
 
   toggleMenu() {
@@ -53,7 +61,6 @@ export class AvatarComponent implements OnInit {
     reader.onload = (e) => {
       const base64Image: string = e.target!.result as string;
 
-
       this.uploadImage(base64Image);
     };
     reader.readAsDataURL(file);
@@ -72,7 +79,7 @@ export class AvatarComponent implements OnInit {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    }).then(_ => this.updateAvartar());
+    }).then((_) => this.updateAvartar());
   }
 
   updateAvartar() {
@@ -83,20 +90,21 @@ export class AvatarComponent implements OnInit {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    }).then(response => {
+    }).then((response) => {
       if (response.ok) {
-        response.text().then(res => this.image_link = res)
+        response.text().then((res) => this.image_link = res);
       }
     });
   }
 
-  onButtonClick(option: ButtonOption) {
+  toggleFriendPopup() {
+    this.friend_popup = !this.friend_popup;
+  }
+
+  logOut() {
     this.menuVisible = false;
 
-    switch (option) {
-      case "logout":
-        localStorage.removeItem("token");
-        this.router.navigate(["/"]);
-    }
+    localStorage.removeItem("token");
+    this.router.navigate(["/"]);
   }
 }
