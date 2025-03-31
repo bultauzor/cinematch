@@ -14,7 +14,7 @@ use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
 use tokio::sync::broadcast;
 use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
-use tracing::{info, warn};
+use tracing::warn;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -28,7 +28,7 @@ pub async fn start(
     State(state): State<ApiHandlerState>,
     Json(mut input): Json<SessionInput>,
 ) -> Result<Json<Uuid>, ApiError> {
-    if input.participants.len() < 1 {
+    if input.participants.is_empty() {
         return Err(ApiError::precondition_failed("not enough users".to_owned()));
     }
 
