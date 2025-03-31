@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Input, ViewChild } from "@angular/core";
+import { Component, ElementRef, inject, Input, ViewChild,  OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { NgIf, NgOptimizedImage } from "@angular/common";
 import { environment } from "../../../environments/environment";
@@ -15,7 +15,7 @@ type ButtonOption = "logout";
   templateUrl: "./avatar.component.html",
   styleUrl: "./avatar.component.css",
 })
-export class AvatarComponent {
+export class AvatarComponent implements OnInit {
   router = inject(Router);
 
   @Input()
@@ -28,6 +28,10 @@ export class AvatarComponent {
 
   @ViewChild("fileInput", { static: false })
   fileInput!: ElementRef;
+
+  ngOnInit(): void {
+    this.updateAvartar()
+  }
 
   toggleMenu() {
     this.menuVisible = !this.menuVisible;
