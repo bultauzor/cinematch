@@ -21,4 +21,9 @@
   a:hover {
     color: #a6daff;
   }
+
+  .noStyle{
+    color: white;
+    text-decoration: none;
+  }
 }
