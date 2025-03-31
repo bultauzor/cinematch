@@ -9,6 +9,7 @@ import {FilterListComponent} from "../../components/molecules/filter-list/filter
 import {ContentType} from "../../models/api";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {FiltersService} from "../../services/filters.service";
+import {FiltersService} from "../../services/filters.service";
 
 @Component({
   selector: "app-user-home",
