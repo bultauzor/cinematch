@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            with user_embedding as (select user_id, embedding\n                                    from recommender_vectors\n                                    where user_id = $1),\n                 recommended_users as (select rv.user_id, 1 - (rv.embedding <%> ue.embedding) as score\n                                       from recommender_vectors as rv\n                                                join user_embedding as ue on true\n                                       where rv.user_id != ue.user_id\n                                       order by rv.embedding <%> ue.embedding\n                                       limit 5),\n                 cs_me as (select * from contents_seen where user_id = $1)\n            select other.content_id, max(other.grade / 10 * ru.score) as score\n            from contents_seen as other\n                     full outer join cs_me as me\n                                     on other.content_id = me.content_id\n                     join recommended_users as ru on other.user_id = ru.user_id\n            where other.user_id in (select user_id from recommended_users)\n              and me.content_id is null\n              and other.grade > 5\n            group by other.content_id\n            order by score desc",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "content_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "score",
+        "type_info": "Float8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      null
+    ]
+  },
+  "hash": "d3bd3712dc8213e294cb021599154f804d0718f2f72454e2290a40e17752d0f3"
+}

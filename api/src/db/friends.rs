@@ -6,16 +6,19 @@ impl DbHandler {
     pub async fn get_all_friends(&self, user_id: Uuid) -> Result<Vec<Friend>, sqlx::Error> {
         let res = sqlx::query_as!(
             Friend,
-            "SELECT user_id, friend_id FROM friends WHERE user_id = $1",
+            r#"SELECT f.user_id, f.friend_id, u.username as friend_username
+            FROM friends f
+            JOIN users u ON f.friend_id = u.user_id
+            WHERE f.user_id = $1"#,
             &user_id
         )
         .fetch_all(&self.pool)
         .await?;
-
         Ok(res)
     }
 
-    pub async fn create_invitation_friend(
+
+    pub async fn create_invitation_friends(
         &self,
         user_id: Uuid,
         username: String,

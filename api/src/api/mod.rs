@@ -1,4 +1,5 @@
 pub mod auth;
+pub mod content;
 pub mod errors;
 pub mod friends;
 mod invitations;
@@ -23,11 +24,13 @@ use uuid::Uuid;
 
 use crate::db::DbHandler;
 use crate::provider::tmdb::TmdbProvider;
+use crate::recommender::cinematch::CinematchRecommender;
 use crate::session::Session;
 
 pub struct ApiHandler {
     pub db: DbHandler,
-    pub provider: TmdbProvider,
+    pub provider: Arc<TmdbProvider>,
+    pub recommender: Arc<CinematchRecommender>,
     pub sessions: Arc<RwLock<HashMap<Uuid, Arc<Session>>>>,
 }
 
@@ -78,11 +81,13 @@ pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
     Router::new()
         .route("/auth_ping", get(auth_ping))
         .merge(search::search_router(api_handler.clone()))
+        .nest("/seen", seen::seen_router(api_handler.clone()))
         .nest("/session", session::session_router(api_handler.clone()))
         .nest("/friends", friends::friends_router(api_handler.clone()))
-        .nest("/invitations", invitations::invitations_router(api_handler.clone()),
+        .nest(
+            "/invitations",
+            invitations::invitations_router(api_handler.clone()),
         )
-        .nest("/seen", seen::seen_router(api_handler))
         .layer(axum::middleware::from_fn(move |req, next| {
             auth_middleware(req, next, public_key)
         }))

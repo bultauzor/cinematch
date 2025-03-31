@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select updated_at from recommender_providers where content_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "9481e433819c84ce2a6535227dfea2dc2b7c884e29f0c415adc42ba79386b290"
+}

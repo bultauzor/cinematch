@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into recommendations (hash) values ($1) returning recommendation_id",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "recommendation_id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Bytea"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "cb3f744b573564dce0892a538968ee29e2e7e859ec17c2d3264a4a0dfeea0c41"
+}

@@ -2,6 +2,7 @@ pub mod api;
 pub mod db;
 pub mod model;
 pub mod provider;
+mod recommender;
 mod session;
 
 use crate::api::ApiHandler;
@@ -55,6 +56,8 @@ pub fn init_logger() {
 
 #[tokio::main]
 async fn main() {
+    init_logger();
+
     let address = env_get_or("ADDRESS", "0.0.0.0".to_string());
     let port: u16 = env_get_num_or("PORT", 8080);
     let postgresql_uri = env_get("POSTGRESQL_ADDON_URI");
@@ -73,8 +76,6 @@ async fn main() {
         auth_api_url.pop();
     }
 
-    init_logger();
-
     info!("Connecting to database");
     let db = match DbHandler::connect(&postgresql_uri).await {
         Some(db) => {
@@ -90,17 +91,29 @@ async fn main() {
     _ = db.clean_invitations().await;
 
     let tmdb_provider = match TmdbProvider::new(&tmdb_token) {
-        Some(tmdb_provider) => tmdb_provider,
+        Some(tmdb_provider) => Arc::new(tmdb_provider),
         None => {
             error!("Failed to initialize tmdb provider");
             std::process::exit(1);
         }
     };
 
+    let recommender =
+        match recommender::cinematch::CinematchRecommender::new(db.clone(), tmdb_provider.clone())
+            .await
+        {
+            Ok(recommender) => recommender,
+            Err(error) => {
+                error!(?error, "Failed to init recommender");
+                std::process::exit(1);
+            }
+        };
+
     let app = api::app(
         ApiHandlerState::new(ApiHandler {
             db,
             provider: tmdb_provider,
+            recommender,
             sessions: Arc::new(RwLock::new(HashMap::new())),
         }),
         auth_api_url,
