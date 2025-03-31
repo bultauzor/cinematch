@@ -1,6 +1,7 @@
 use crate::provider::ProviderKey;
 use chrono::{NaiveDate, NaiveDateTime, Utc};
 use serde::Serialize;
+use std::fmt::Display;
 use std::str::FromStr;
 use std::time::Duration;
 use uuid::Uuid;
@@ -10,6 +11,16 @@ use uuid::Uuid;
 pub enum ContentType {
     Movie,
     Show,
+}
+
+impl Display for ContentType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let str = match self {
+            ContentType::Movie => "movie",
+            ContentType::Show => "show",
+        };
+        write!(f, "{}", str)
+    }
 }
 
 pub struct Content {

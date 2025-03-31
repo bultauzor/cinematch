@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update recommendations set refcount = refcount - 1 where recommendation_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "b178f3d617f18e148b3b9b2d2fe3a3adc3f3858fe06692182e4420f2df2b9110"
+}

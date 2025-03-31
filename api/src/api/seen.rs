@@ -4,6 +4,7 @@ use axum::{
     http::StatusCode,
     routing::{delete, get, patch, post},
 };
+use tracing::error;
 use uuid::Uuid;
 
 use crate::model::seen::{SeenContent, SeenContentInput, SeenGradeInput};
@@ -71,6 +72,18 @@ pub async fn post_seen_content(
             input.content_id
         )))
     } else {
+        api_handler_state.recommender.user_seen_changed();
+        if input.grade.map(|grade| grade > 5f64).unwrap_or_default() {
+            api_handler_state
+                .recommender
+                .rated_positively(input.content_id)
+                .await
+                .map_err(|error| {
+                    error!(?error);
+                    ApiError::internal("Failed to update rated_positively")
+                })?;
+        }
+
         api_handler_state
             .db
             .insert_seen_content(input, &auth_context.user)
@@ -90,7 +103,10 @@ pub async fn delete_seen_content(
         .delete_seen_content(&content_id, &auth_context.user)
         .await
     {
-        Ok(content) => Ok((StatusCode::NO_CONTENT, Json(content))),
+        Ok(content) => {
+            api_handler_state.recommender.user_seen_changed();
+            Ok((StatusCode::NO_CONTENT, Json(content)))
+        }
         Err(err) => Err(ApiError::from(err)),
     }
 }
@@ -110,7 +126,21 @@ pub async fn patch_seen_content_grade(
         .update_seen_content_grade(input.grade, &content_id, &auth_context.user)
         .await
     {
-        Ok(()) => Ok(()),
+        Ok(()) => {
+            api_handler_state.recommender.user_seen_changed();
+            if input.grade.map(|grade| grade > 5f64).unwrap_or_default() {
+                api_handler_state
+                    .recommender
+                    .rated_positively(input.content_id)
+                    .await
+                    .map_err(|error| {
+                        error!(?error);
+                        ApiError::internal("Failed to update rated_positively")
+                    })?;
+            }
+
+            Ok(())
+        }
         Err(sqlx::Error::RowNotFound) => Err(ApiError::bad_request(
             "you have not seen this content".to_string(),
         )),
@@ -128,7 +158,10 @@ pub async fn delete_seen_content_grade(
         .update_seen_content_grade(None, &content_id, &auth_context.user)
         .await
     {
-        Ok(()) => Ok(()),
+        Ok(()) => {
+            api_handler_state.recommender.user_seen_changed();
+            Ok(())
+        }
         Err(sqlx::Error::RowNotFound) => Err(ApiError::bad_request(
             "you have not seen this content".to_string(),
         )),

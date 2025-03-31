@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from recommender_providers_rel where a = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "9d2dcba8626a1cfda8b5b90145af094687c98c2f5eb9e5aaf6a82304f8de032b"
+}

@@ -1,0 +1,38 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select recommendation_id, hash, updated_at, refcount\n            from recommendations\n            where (refcount <= 0 and (updated_at + interval '1 hour') < now())\n               or (updated_at + interval '4 hour' < now())",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "recommendation_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "hash",
+        "type_info": "Bytea"
+      },
+      {
+        "ordinal": 2,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 3,
+        "name": "refcount",
+        "type_info": "Int2"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "abcde950c8821ca2beb70db35121b2ca612b34b0246e7e54671e45569a60f4bd"
+}

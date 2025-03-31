@@ -1,0 +1,12 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "refresh materialized view concurrently contents_seen_quantized;",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": []
+  },
+  "hash": "4df53cc8fc49df7ff5c7f8ac129b2d148b8743c06a94041a14932a0c51c0942c"
+}

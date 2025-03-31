@@ -48,9 +48,29 @@ impl Display for ProviderKey {
     }
 }
 
+#[derive(Debug)]
+pub enum Error {
+    Reqwest(reqwest::Error),
+    Str(&'static str),
+}
+
+impl From<reqwest::Error> for Error {
+    fn from(e: reqwest::Error) -> Self {
+        Self::Reqwest(e)
+    }
+}
+
+impl From<&'static str> for Error {
+    fn from(e: &'static str) -> Self {
+        Self::Str(e)
+    }
+}
+
 pub trait Provider {
-    fn search(
+    fn search(&self, query: &str) -> impl Future<Output = Result<Vec<ContentInput>, Error>> + Send;
+
+    fn get_recommendations(
         &self,
-        query: &str,
-    ) -> impl Future<Output = Result<Vec<ContentInput>, Box<dyn std::error::Error>>> + Send;
+        id: &ProviderKey,
+    ) -> impl Future<Output = Result<Vec<ContentInput>, Error>> + Send;
 }
