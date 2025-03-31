@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            update users\n            set avatar = $1\n            where user_id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "e5d43d8a4707be8b087de1ec04d4b954a4df2d7c68cb4de3e0a14834d9e4aa78"
+}
