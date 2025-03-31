@@ -39,7 +39,7 @@ services:
         - action: rebuild
           path: api/bootstrap-database.Dockerfile
 
-  auth:
+  auth: 
     build:
       context: auth
       dockerfile: Dockerfile
