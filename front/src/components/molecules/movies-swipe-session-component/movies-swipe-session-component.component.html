@@ -12,7 +12,9 @@
         [swipeState]="activeIndex == i ? swipeState : ''"
         cardPosition="absolute"
         size="big"
-        title="Le film"
+        [posterUrl]="movie.poster!"
+        [title]="movie.title"
+        [rating]="String(movie.vote_average)"
         [id]="'card-'+i"
         [style]="'z-index:'+ (movies.length - i) "
     />

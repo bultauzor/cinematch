@@ -5,7 +5,11 @@
     <span>Match</span>
     <i class="fa-solid fa-film"></i>
   </h2>
-  <app-movie-card title="Movie result" size="big" />
+  <app-movie-card
+    [posterUrl]="result.poster!"
+    [title]="result.title"
+    [rating]="String(result.vote_average)"
+    size="big" />
   <div class="buttons">
     <app-button type="border_red" text="Restart" (click)="restart()"/>
     <app-button type="red" text="Watch" />
