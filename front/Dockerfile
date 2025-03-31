@@ -1,7 +1,11 @@
 FROM node:18 AS builder
 
+ARG API_URL
+
 COPY . /app
 WORKDIR /app
+
+RUN sed -i "s,http://prod-url,$API_URL,g" /app/src/environments/environment.ts
 
 RUN npm install
 RUN npm install -g @angular/cli

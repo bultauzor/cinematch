@@ -122,6 +122,8 @@ services:
     build:
       context: front
       dockerfile: Dockerfile
+      args:
+        API_URL: http://localhost:8080
     depends_on:
       api:
         condition: service_healthy
