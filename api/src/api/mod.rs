@@ -113,7 +113,7 @@ pub async fn cors_middleware(request: Request, next: Next) -> Response<Body> {
     if let Method::OPTIONS = method {
         response.headers_mut().insert(
             header::ACCESS_CONTROL_ALLOW_METHODS,
-            HeaderValue::from_static("GET,POST,PUT,DELETE,OPTIONS"),
+            HeaderValue::from_static("GET,POST,PUT,DELETE,OPTIONS,PATCH"),
         );
         response.headers_mut().insert(
             header::ACCESS_CONTROL_ALLOW_HEADERS,
