@@ -2,7 +2,7 @@ name: cinematch
 
 services:
   db:
-    image: postgres:17
+    image: pgvector/pgvector:pg17
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -109,7 +109,7 @@ services:
     restart: on-failure
     develop:
       watch:
-        - action: sync+restart
+        - action: rebuild
           path: api
           target: /app
           ignore:
