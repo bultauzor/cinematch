@@ -1,6 +1,6 @@
 use crate::db::DbHandler;
 use crate::model::recommendation::{
-    Recommendation, RecommendationParametersInput, RecommendationView,
+    Recommendation, RecommendationView,
 };
 use crate::recommender::Error;
 use crate::recommender::cinematch::RecommenderCommand;

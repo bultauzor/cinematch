@@ -126,7 +126,9 @@ impl CinematchRecommender {
                         Some(Ok(Err(error))) => {
                             warn!(?error, "UpdateContentRecommendations task failed");
                         }
-                        _ => {}
+                        _ => {
+                            tokio::time::sleep(Duration::from_secs(20)).await;
+                        }
                     }
                 }
                 else => return,
