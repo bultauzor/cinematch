@@ -6,7 +6,7 @@ pub mod friends;
 pub mod invitations;
 pub mod search;
 pub mod seen;
-pub mod session;
+mod session;
 pub mod recommendation;
 
 use axum::body::Body;
