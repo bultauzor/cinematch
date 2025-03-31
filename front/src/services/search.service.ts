@@ -1,21 +1,22 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
-import { environment } from '../environments/environment';
-import { Content } from '../models/api'
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {BehaviorSubject} from 'rxjs';
+import {environment} from '../environments/environment';
+import {Content} from '../models/api'
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
-  searchResultSubject = new BehaviorSubject<Content[]>([]);  
+  searchResultSubject = new BehaviorSubject<Content[] | null>(null);
   public searchResult$ = this.searchResultSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   searchMovies(query: string): void {
     if (query === "") {
-      this.searchResultSubject.next([]);
+      this.searchResultSubject.next(null);
       return;
     }
 

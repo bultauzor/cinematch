@@ -7,7 +7,7 @@ export type ApiError = {
   error_code: string;
 };
 
-export type ContentType = "movie"| "show"
+export type ContentType = "Movie" | "Show"
 
 export type Content = {
     content_id: string,

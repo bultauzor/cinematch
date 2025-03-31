@@ -1,4 +1,22 @@
-<div class="movie-grid">
-  <app-movie-card *ngFor="let movie of movies" [posterUrl]="movie.poster!" [title]="movie.title" size="small">
-  </app-movie-card>
-</div>
+@if (searchMode) {
+    @if (moviesSearch.length == 0) {
+        <div class="nothing">No results :/</div>
+    } @else {
+        <div class="movie-grid">
+            <app-movie-card *ngFor="let movie of moviesSearch" [posterUrl]="movie.poster!" [title]="movie.title"
+                            size="small">
+            </app-movie-card>
+        </div>
+    }
+} @else {
+    @if (moviesRecommendation.length == 0) {
+        <div class="nothing">No recommendations, you may want to rate viewed contents</div>
+    } @else {
+        <div class="movie-grid">
+            <app-movie-card *ngFor="let movie of moviesRecommendation" [posterUrl]="movie.poster!" [title]="movie.title"
+                            size="small">
+            </app-movie-card>
+        </div>
+    }
+}
+
