@@ -26,7 +26,6 @@ export class RecommendationsService implements OnInit {
 
       this.http.post<Content[]>(apiUrl, result, {headers}).subscribe(
         (response) => {
-          console.log(response)
           this.recommendationResultSubject.next(response);
         },
       );

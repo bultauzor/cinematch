@@ -5,6 +5,8 @@ import { MoovieDisplayComponent } from "../../components/molecules/moovie-displa
 import { NotificationCardComponent } from "../../components/molecules/notification-card/notification-card.component";
 import { NgForOf } from "@angular/common";
 import { environment } from "../../environments/environment";
+import {FilterListComponent} from "../../components/molecules/filter-list/filter-list.component";
+import {ContentType} from "../../models/api";
 
 @Component({
   selector: "app-user-home",
@@ -14,6 +16,7 @@ import { environment } from "../../environments/environment";
     MoovieDisplayComponent,
     NotificationCardComponent,
     NgForOf,
+    FilterListComponent
   ],
   templateUrl: "./user-home.component.html",
   styleUrl: "./user-home.component.css",
@@ -25,6 +28,24 @@ export class UserHomeComponent {
   async ngOnInit(): Promise<void> {
     await this.request();
     setInterval(this.request, 30000);
+  }
+
+  constructor(private filtersService: FiltersService) {
+  }
+
+  onFiltersChanged(filtersType: string, selectedItems: string[]) {
+    switch (filtersType) {
+      case 'genres':
+        this.filtersService.setGenres(selectedItems);
+        break
+      case 'type':
+        if (selectedItems.length == 0 || selectedItems.length == 2)
+          this.filtersService.setContentType(null);
+        else this.filtersService.setContentType(selectedItems[0] as ContentType)
+        break
+      case 'friends':
+        break
+    }
   }
 
   async refreshComponent() {

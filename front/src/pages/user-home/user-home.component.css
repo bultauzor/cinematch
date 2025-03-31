@@ -3,3 +3,30 @@
   display: flex;
   flex-direction: column;
 }
+.columns {
+  display: flex;
+  width: 100vw;
+}
+
+.main-column {
+  width: max-content;
+  flex: 1 1 0;
+}
+
+.filter-column {
+  width: 24vw;
+  margin-top: 110px;
+  color: white;
+  font-size: 0.8em;
+  padding: 0 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.filter {
+  width: 80%;
+  display: inline-block;
+  margin: 0 20px;
+}

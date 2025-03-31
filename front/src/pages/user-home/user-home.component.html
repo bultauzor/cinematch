@@ -5,5 +5,18 @@
   <app-notification-card type="Friend" *ngFor="let friend of friends_invitation" [user_id]="friend.user_id"
     [user_username]="friend.user_username" (refreshParent)="refreshComponent()" />
 </div>
-<app-moovie-display />
-<app-home-footer />
+
+<div class="columns">
+    <div class="filter-column">
+        <app-filter-list class="filter" title="Genres" [width]="10"
+                         [elements]='["Action","Adventure","Animation","Comedy","Crime","Documentary","Drama","Family","Fantastic","War","History"]'
+                         (selectedValues)="onFiltersChanged('genres',$event)"/>
+        <app-filter-list class="filter" title="Type" [width]="10" [elements]='["Movie","Show"]'
+                         (selectedValues)="onFiltersChanged('type',$event)"/>
+        <app-filter-list class="filter" title="Friends" [width]="10" [elements]='["Michel", "Patrick"]'
+                         (selectedValues)="onFiltersChanged('friends',$event)"/>
+    </div>
+    <app-moovie-display class="main-column"/>
+</div>
+
+<app-home-footer/>
