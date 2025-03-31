@@ -3,5 +3,18 @@
   grid-template-columns: repeat(auto-fill, 16rem);
   gap: 20px;
   column-gap: 20px;
-  padding: 10vh;
+  padding: 0 2vw 10vh 1vw;
+  margin-top: 110px;
+}
+
+.nothing {
+  display: flex;
+  margin-top: 110px;
+  width: 100%;
+  height: calc(100% - 110px - 2 * 1.3em);
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.3em;
+  font-family: "Montserrat", serif;
 }

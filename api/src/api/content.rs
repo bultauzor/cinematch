@@ -1,5 +1,5 @@
-use crate::api::ApiHandlerState;
 use crate::api::errors::ApiError;
+use crate::api::ApiHandlerState;
 use crate::model::content::ContentView;
 use axum::extract::{Path, State};
 use axum::routing::get;
@@ -9,6 +9,7 @@ use uuid::Uuid;
 pub fn content_router(api_handler_state: ApiHandlerState) -> Router {
     Router::new()
         .route("/{content_id}", get(get_content_by_id))
+        .route("/genres", get(get_genres))
         .with_state(api_handler_state)
 }
 
@@ -25,6 +26,14 @@ pub async fn get_content_by_id(
             "Content with id {} not found",
             content_id
         )))?;
+
+    Ok(Json(res))
+}
+
+pub async fn get_genres(
+    State(api_handler_state): State<ApiHandlerState>,
+) -> Result<Json<Vec<String>>, ApiError> {
+    let res = api_handler_state.db.get_genres().await?;
 
     Ok(Json(res))
 }

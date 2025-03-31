@@ -1,5 +1,6 @@
 use crate::model::content::ContentType;
 use chrono::NaiveDateTime;
+use serde::Deserialize;
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
@@ -39,7 +40,7 @@ pub struct RecommendationParameters {
     pub genres: Vec<String>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Deserialize)]
 pub struct RecommendationParametersInput {
     pub users_input: Vec<Uuid>,
     pub not_seen_by: Vec<Uuid>,

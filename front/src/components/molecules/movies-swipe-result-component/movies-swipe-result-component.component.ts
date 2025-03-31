@@ -22,7 +22,7 @@ export class MoviesSwipeResultComponentComponent {
     provider_id: "",
     updated_at: "",
     content_id: "",
-    content_type: "movie",
+    content_type: "Movie",
     title: "",
     overview: "",
     poster: undefined,

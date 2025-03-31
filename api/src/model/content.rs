@@ -1,12 +1,12 @@
 use crate::provider::ProviderKey;
 use chrono::{NaiveDate, NaiveDateTime, Utc};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 use std::str::FromStr;
 use std::time::Duration;
 use uuid::Uuid;
 
-#[derive(sqlx::Type, Debug, Serialize, Copy, Clone, PartialEq, Eq)]
+#[derive(sqlx::Type, Debug, Serialize, Deserialize, Copy, Clone, PartialEq, Eq)]
 #[sqlx(type_name = "content_type", rename_all = "lowercase")]
 pub enum ContentType {
     Movie,
