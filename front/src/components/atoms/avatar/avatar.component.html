@@ -1,2 +1,12 @@
-<img class="image" ngSrc="{{image_link}}" alt="" *ngIf="router_link != ''" routerLink="{{router_link}}" [width]=size [height]=size>
-<img class="image" ngSrc="{{image_link}}" alt="" [width]=size [height]=size>
+<div class="avatar-container" (click)="toggleMenu()">
+  <img class="image" ngSrc="{{image_link}}" alt="" *ngIf="router_link != ''" routerLink="{{router_link}}" [width]="size"
+    [height]="size">
+  <img class="image" ngSrc="{{image_link}}" alt="" [width]="size" [height]="size" *ngIf="router_link === ''">
+</div>
+
+<div *ngIf="menuVisible" class="menu">
+  <button class="menu-button" (click)="triggerImageUpload()">Change Avatar</button>
+  <button class="menu-button" (click)="onButtonClick('logout')">Log Out</button>
+
+  <input type="file" #fileInput accept="image/*" (change)="handleFileInput($event)" style="display: none" />
+</div>

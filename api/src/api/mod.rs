@@ -1,11 +1,12 @@
 pub mod auth;
+pub mod avatar;
 pub mod content;
 pub mod errors;
 pub mod friends;
-mod invitations;
+pub mod invitations;
 pub mod search;
 pub mod seen;
-mod session;
+pub mod session;
 
 use axum::body::Body;
 use axum::extract::Request;
@@ -71,6 +72,7 @@ pub fn app(
     Router::new()
         .route("/ping", get(ping))
         .route("/teapot", get(teapot))
+        .nest("/avatar", avatar::avatar_router_unauth(api_handler.clone()))
         .merge(self::auth::auth_router(auth_api_url))
         .merge(api(api_handler, public_key))
         .layer(axum::middleware::from_fn(log_middleware))
@@ -81,6 +83,7 @@ pub fn api(api_handler: ApiHandlerState, public_key: PublicKey) -> Router<()> {
     Router::new()
         .route("/auth_ping", get(auth_ping))
         .merge(search::search_router(api_handler.clone()))
+        .nest("/avatar", avatar::avatar_router(api_handler.clone()))
         .nest("/seen", seen::seen_router(api_handler.clone()))
         .nest("/session", session::session_router(api_handler.clone()))
         .nest("/friends", friends::friends_router(api_handler.clone()))
