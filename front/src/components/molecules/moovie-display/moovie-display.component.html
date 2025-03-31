@@ -4,7 +4,7 @@
     } @else {
         <div class="movie-grid">
             <app-movie-card *ngFor="let movie of moviesSearch" [posterUrl]="movie.poster!" [title]="movie.title"
-                            size="small" (movieClicked)="goToMovieDetails($event)">
+                            size="small" (click)="goToMovieDetails(movie.content_id)" >
             </app-movie-card>
         </div>
     }
@@ -14,7 +14,7 @@
     } @else {
         <div class="movie-grid">
             <app-movie-card *ngFor="let movie of moviesRecommendation" [posterUrl]="movie.poster!" [title]="movie.title"
-                            size="small" (movieClicked)="goToMovieDetails($event)">
+                            size="small" (click)="goToMovieDetails(movie.content_id)" >
             </app-movie-card>
         </div>
     }

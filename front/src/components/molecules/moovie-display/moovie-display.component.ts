@@ -24,7 +24,7 @@ export class MoovieDisplayComponent implements OnInit {
   }
 
   goToMovieDetails(content: any) {
-    this.router.navigate(['/page', content.id], { state: { content } });
+    this.router.navigate(['page', content]);
   }
 
   ngOnInit(): void {

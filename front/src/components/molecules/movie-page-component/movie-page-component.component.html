@@ -18,15 +18,26 @@
   <div class="movie-info">
 
     @if (content?.content_type){
-      <h3>Description - {{content?.content_type}}</h3>
-    } @else {
-      <h3>Description - TV SHOW -
+      <h3>Description - {{content?.content_type}}
 
         @if (isSeen){
           ✔
         } @else {
           ❌
         }
+
+      </h3>
+
+
+    } @else {
+      <h3>Description - TV SHOW -
+        @if (isSeen){
+          ✔
+        } @else {
+          ❌
+        }
+
+
 
       </h3>
     }
