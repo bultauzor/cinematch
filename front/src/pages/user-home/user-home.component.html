@@ -13,8 +13,10 @@
                          (selectedValues)="onFiltersChanged('genres',$event)"/>
         <app-filter-list class="filter" title="Type" [width]="10" [elements]='["Movie","Show"]'
                          (selectedValues)="onFiltersChanged('type',$event)"/>
-        <app-filter-list class="filter" title="Friends" [width]="10" [elements]='["Michel", "Patrick"]'
+        <app-filter-list class="filter" title="Friends" [width]="10" [elements]='friends_username'
                          (selectedValues)="onFiltersChanged('friends',$event)"/>
+        <app-filter-list class="filter" title="Not seen by" [width]="10" [elements]='friends_username'
+                         (selectedValues)="onFiltersChanged('not_seen',$event)"/>
     </div>
     <app-moovie-display class="main-column"/>
 </div>

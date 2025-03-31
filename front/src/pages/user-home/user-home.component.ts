@@ -25,6 +25,8 @@ import {FiltersService} from "../../services/filters.service";
 })
 export class UserHomeComponent implements OnInit {
   genres: string[] = []
+  friends: friend[] = []
+  friends_username: string[] = [];
 
   friends_invitation: FriendRequest[] = [];
   session_invitation: SessionRequest[] = [];
@@ -46,9 +48,24 @@ export class UserHomeComponent implements OnInit {
         this.genres = response
       },
     );
+
+    if (token != null) {
+      const responseGetFriends = await fetch(environment.api_url + "/friends", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
+
+      })
+      await this.ngZone.run(async () => {
+        this.friends = await responseGetFriends.json();
+        this.friends_username = this.friends.map(friend => friend.friend_username);
+      });
+    }
   }
 
-  constructor(private http: HttpClient, private filtersService: FiltersService) {
+  constructor(private http: HttpClient, private filtersService: FiltersService, private ngZone: NgZone) {
   }
 
   onFiltersChanged(filtersType: string, selectedItems: string[]) {
@@ -62,6 +79,14 @@ export class UserHomeComponent implements OnInit {
         else this.filtersService.setContentType(selectedItems[0] as ContentType)
         break
       case 'friends':
+        let friends = selectedItems.map((username: string) =>
+          this.friends.filter((elem) => elem.friend_username == username)[0].friend_id)
+        this.filtersService.setUsersInput(friends)
+        break
+      case 'not_seen':
+        let ns = selectedItems.map((username: string) =>
+          this.friends.filter((elem) => elem.friend_username == username)[0].friend_id)
+        this.filtersService.setUsersInput(ns)
         break
     }
   }
@@ -110,3 +135,9 @@ type FriendRequest = {
   user_username: string;
   user_avatar?: string;
 };
+
+type friend = {
+  user_id: string,
+  friend_id: string,
+  friend_username: string
+}
