@@ -30,6 +30,8 @@ export class MoviePageComponentComponent implements OnInit {
   sliderValue: number = 10;
   genres: string[] = ['Action', 'Adventure', 'Crime', 'Drama', 'Sci-Fi'];
 
+  token: any;
+
 
   constructor(private route: ActivatedRoute, private router: Router) {
     const navigation = this.router.getCurrentNavigation();
@@ -42,6 +44,7 @@ export class MoviePageComponentComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.token = localStorage.getItem('token');
 
     console.log(this.content)
 
@@ -52,6 +55,7 @@ export class MoviePageComponentComponent implements OnInit {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
+              'Authorization': `Bearer ${this.token}`
             }
           });
 
@@ -73,41 +77,48 @@ export class MoviePageComponentComponent implements OnInit {
           // await this.router.navigate([""]);
         }
 
-        try {
-          const seenResponse = await fetch(environment.api_url + "/seen/me/" + this.movieID, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            }
-          });
+        this.getGrade()
 
-          if (!seenResponse.ok) {
-            throw new Error("Erreur lors de la récupération du film");
-          }
-
-          const seenContents: SeenContent[] = await seenResponse.json();
-          const seenMovie = seenContents.find(content => content.content.content_id === this.movieID);
-
-          if (seenMovie) {
-
-            if (seenMovie) {
-              this.isSeen = true;
-              if (seenMovie.grade !== undefined) {
-                this.sliderValue = seenMovie.grade * 2;
-                this.userRating = seenMovie.grade;
-              }
-            }
-            console.log(`Le film a été vu. Note : ${seenMovie.grade ?? "Aucune note"}`);
-          } else {
-            this.isSeen = false;
-            console.log("Le film n'a pas été regardé par l'utilisateur.");
-          }
-
-        } catch (error) {
-          console.error("Erreur :", error);
-          alert("TEST")
-        }
       }
+    }
+  }
+
+  async getGrade(){
+    try {
+      const seenResponse = await fetch(environment.api_url + "/seen/me", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${this.token}`
+        }
+      });
+
+      if (!seenResponse.ok) {
+        throw new Error("Erreur lors de la récupération du film");
+      }
+
+      const seenContents: SeenContent[] = await seenResponse.json();
+      const seenMovie = seenContents.find(content => content.content.content_id === this.movieID);
+
+      if (seenMovie) {
+
+
+        if (seenMovie) {
+          this.isSeen = true;
+          if (seenMovie.grade !== undefined) {
+            this.sliderValue = seenMovie.grade * 2;
+            this.userRating = seenMovie.grade;
+          }
+        }
+        console.log(`Le film a été vu. Note : ${seenMovie.grade ?? "Aucune note"}`);
+      } else {
+        this.isSeen = false;
+        console.log("Le film n'a pas été regardé par l'utilisateur.");
+      }
+
+    } catch (error) {
+      console.error("Erreur :", error);
+      alert("TEST")
     }
   }
 
@@ -122,15 +133,13 @@ export class MoviePageComponentComponent implements OnInit {
     };
 
     if(this.isSeen) {
-
-
       try {
-        const response = await fetch(environment.api_url + "/seen/me", {
+        const response = await fetch(environment.api_url + "/seen/me/" + this.movieID + "/grade", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'Authorization': `Bearer ${this.token}`
           },
-          body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
@@ -146,11 +155,13 @@ export class MoviePageComponentComponent implements OnInit {
     } else {
 
       try {
-        const response = await fetch(environment.api_url + "/seen/me/" + this.movieID + "/grade", {
-          method: "PATCH",
+        const response = await fetch(environment.api_url + "/seen/me", {
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'Authorization': `Bearer ${this.token}`
           },
+          body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
@@ -161,7 +172,7 @@ export class MoviePageComponentComponent implements OnInit {
         alert("Note soumise avec succès !");
       } catch (error) {
         console.error("Erreur :", error);
-        alert("Erreur lors de l'envoi de la note");
+        alert("Erreur lors de l'envoi de la notefdsfdsfsd");
       }
 
     }
