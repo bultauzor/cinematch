@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {NgClass} from '@angular/common';
 import {HAMMER_GESTURE_CONFIG, HammerGestureConfig} from '@angular/platform-browser';
+import {Content} from '../../../models/api';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-movie-card',
@@ -24,6 +26,15 @@ export class MovieCardComponent {
   @Input() cardPosition: '' | 'absolute' = '';
   @Input() size: 'small' | 'big' = 'small';
   @Output() swipe = new EventEmitter<string>();
+  @Input() content?: Content;
+
+  constructor(private router: Router) {}
+
+  goToContentPage(){
+    this.router.navigate(['/page', this.content?.content_id], {
+      state: { contentview: this.content }
+    });
+  }
 
 
   onSwipe(event: any) {
