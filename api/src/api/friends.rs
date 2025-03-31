@@ -18,6 +18,7 @@ pub struct FriendRequest {
 pub struct Friend {
     pub user_id: Uuid,
     pub friend_id: Uuid,
+    pub friend_username: String,
 }
 
 #[derive(Deserialize)]
