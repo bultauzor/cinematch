@@ -5,8 +5,10 @@
 </div>
 
 <div *ngIf="menuVisible" class="menu">
+  <button class="menu-button" (click)="toggleFriendPopup()">Friend Menu</button>
   <button class="menu-button" (click)="triggerImageUpload()">Change Avatar</button>
-  <button class="menu-button" (click)="onButtonClick('logout')">Log Out</button>
+  <button class="menu-button" (click)="logOut()">Log Out</button>
 
   <input type="file" #fileInput accept="image/*" (change)="handleFileInput($event)" style="display: none" />
+  <app-friend-popup *ngIf="friend_popup" (closePopup)="toggleFriendPopup()" />
 </div>
