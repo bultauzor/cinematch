@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT f.user_id, f.friend_id, u.username as friend_username\n            FROM friends f\n            JOIN users u ON f.friend_id = u.user_id\n            WHERE f.user_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "friend_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "friend_username",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "8349668f8925b4ae4c2aa41cd1f652b1b130a745e626e7d67527a23e79454f39"
+}
