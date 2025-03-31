@@ -1,10 +1,10 @@
-import { Component } from "@angular/core";
-import { HomeFooterComponent } from "../../components/molecules/home-footer/home-footer.component";
-import { HomeHeaderComponent } from "../../components/molecules/home-header/home-header.component";
-import { MoovieDisplayComponent } from "../../components/molecules/moovie-display/moovie-display.component";
-import { NotificationCardComponent } from "../../components/molecules/notification-card/notification-card.component";
-import { NgForOf } from "@angular/common";
-import { environment } from "../../environments/environment";
+import {Component, NgZone, OnInit} from "@angular/core";
+import {HomeFooterComponent} from "../../components/molecules/home-footer/home-footer.component";
+import {HomeHeaderComponent} from "../../components/molecules/home-header/home-header.component";
+import {MoovieDisplayComponent} from "../../components/molecules/moovie-display/moovie-display.component";
+import {NotificationCardComponent} from "../../components/molecules/notification-card/notification-card.component";
+import {NgForOf} from "@angular/common";
+import {environment} from "../../environments/environment";
 import {FilterListComponent} from "../../components/molecules/filter-list/filter-list.component";
 import {ContentType} from "../../models/api";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
