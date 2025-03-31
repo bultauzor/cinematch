@@ -55,7 +55,7 @@ impl RecommendationsIterator {
             *inner = Self::load_inner(&self.recommendation_id, pos, &self.db_handler).await?;
         }
 
-        let r = inner.data.get((pos - inner.min) as usize);
+        let r = inner.data.get((pos - inner.inf) as usize);
         Ok(r.cloned().map(|r| r.into()))
     }
 
