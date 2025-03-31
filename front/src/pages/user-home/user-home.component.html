@@ -9,7 +9,7 @@
 <div class="columns">
     <div class="filter-column">
         <app-filter-list class="filter" title="Genres" [width]="10"
-                         [elements]='["Action","Adventure","Animation","Comedy","Crime","Documentary","Drama","Family","Fantastic","War","History"]'
+                         [elements]='genres'
                          (selectedValues)="onFiltersChanged('genres',$event)"/>
         <app-filter-list class="filter" title="Type" [width]="10" [elements]='["Movie","Show"]'
                          (selectedValues)="onFiltersChanged('type',$event)"/>

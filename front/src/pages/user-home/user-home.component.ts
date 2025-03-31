@@ -7,6 +7,8 @@ import { NgForOf } from "@angular/common";
 import { environment } from "../../environments/environment";
 import {FilterListComponent} from "../../components/molecules/filter-list/filter-list.component";
 import {ContentType} from "../../models/api";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {FiltersService} from "../../services/filters.service";
 
 @Component({
   selector: "app-user-home",
@@ -21,16 +23,32 @@ import {ContentType} from "../../models/api";
   templateUrl: "./user-home.component.html",
   styleUrl: "./user-home.component.css",
 })
-export class UserHomeComponent {
+export class UserHomeComponent implements OnInit {
+  genres: string[] = []
+
   friends_invitation: FriendRequest[] = [];
   session_invitation: SessionRequest[] = [];
 
   async ngOnInit(): Promise<void> {
     await this.request();
     setInterval(this.request, 30000);
+    await this.request()
+    setInterval(this.request, 30000)
+
+    const apiUrl = environment.api_url + `/content/genres`;
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.get<string[]>(apiUrl, {headers}).subscribe(
+      (response) => {
+        this.genres = response
+      },
+    );
   }
 
-  constructor(private filtersService: FiltersService) {
+  constructor(private http: HttpClient, private filtersService: FiltersService) {
   }
 
   onFiltersChanged(filtersType: string, selectedItems: string[]) {
